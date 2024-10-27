@@ -16,8 +16,7 @@ export function Footer({ brandName, brandLink, routes }) {
             target="_blank"
             className="transition-colors hover:text-blue-500 font-bold"
           >
-            {brandName}
-          </a>{" "}
+Kassel          </a>{" "}
           for a better web.
         </Typography>
         <ul className="flex items-center gap-4">
@@ -44,10 +43,10 @@ Footer.defaultProps = {
   brandName: "Creative Tim",
   brandLink: "https://www.creative-tim.com",
   routes: [
-    { name: "Creative Tim", path: "https://www.creative-tim.com" },
-    { name: "About Us", path: "https://www.creative-tim.com/presentation" },
-    { name: "Blog", path: "https://www.creative-tim.com/blog" },
-    { name: "License", path: "https://www.creative-tim.com/license" },
+    // { name: "Creative Tim", path: "https://www.creative-tim.com" },
+    // { name: "About Us", path: "https://www.creative-tim.com/presentation" },
+    // { name: "Blog", path: "https://www.creative-tim.com/blog" },
+    // { name: "License", path: "https://www.creative-tim.com/license" },
   ],
 };
 
