@@ -25,8 +25,8 @@ function DeleteModule({ showModal, handleClose, handleDelete, id }) {
                 <button onClick={() => { 
   handleDelete(id); 
   handleClose(); 
-}} className="bg-red-600 text-white px-4 py-2 rounded">
-  Yes, Delete
+}} className="bg-red-600 text-white px-4 py-2 rounded m-2">
+   Delete
 </button>
 
                 <button onClick={handleClose} className="bg-gray-300 px-4 py-2 rounded">
