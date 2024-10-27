@@ -11,7 +11,7 @@ import {
 import { PencilIcon, TrashIcon, PlusIcon } from "@heroicons/react/24/outline";
 import Swal from 'sweetalert2';
 
-export function Tables() {
+export function Products() {
   const [products, setProducts] = useState([]); 
   const [loading, setLoading] = useState(true); 
   const navigate = useNavigate(); 
@@ -63,17 +63,17 @@ export function Tables() {
 
         addWatchesBtn.addEventListener('click', () => {
           Swal.close();
-          navigate('/addwatches', { replace: true }); 
+          navigate('/dashboard/addwatches', { replace: true }); 
         });
 
         addFragranceBtn.addEventListener('click', () => {
           Swal.close();
-          navigate('/addfragrance'); 
+          navigate('/dashboard/addfragrance'); 
         });
 
         addBagBtn.addEventListener('click', () => {
           Swal.close();
-          navigate('/addbags'); 
+          navigate('/dashboard/addbags'); 
         });
       },
     });
@@ -235,4 +235,4 @@ export function Tables() {
   );
 }
 
-export default Tables;
+export default Products;

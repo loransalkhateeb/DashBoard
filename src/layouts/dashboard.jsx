@@ -8,8 +8,11 @@ import {
   Footer,
 } from "@/widgets/layout";
 import routes from "@/routes";
-import { useMaterialTailwindController, setOpenConfigurator } from "@/context";
 
+import { useMaterialTailwindController, setOpenConfigurator } from "@/context";
+import { AddWatch } from "@/pages/dashboard/Products/AddProducts/AddWatches";
+import AddFragrance from "@/pages/dashboard/Products/AddProducts/AddFragrance";
+import AddProduct, { AddBags } from "@/pages/dashboard/Products/AddProducts/AddBags";
 export function Dashboard() {
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavType } = controller;
@@ -42,6 +45,9 @@ export function Dashboard() {
                 <Route exact path={path} element={element} />
               ))
           )}
+           <Route path="/addwatches" element={<AddWatch/>} />
+           <Route path="/addfragrance" element={<AddFragrance/>} />
+           <Route path="/addbags" element={<AddBags/>} />
         </Routes>
         <div className="text-blue-gray-600">
           <Footer />
