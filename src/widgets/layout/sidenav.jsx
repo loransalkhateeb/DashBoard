@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { Link, NavLink } from "react-router-dom";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import Logo from '../../Images/Logo.avif';
 import {
   Avatar,
   Button,
@@ -24,10 +25,9 @@ export function Sidenav({ brandImg, brandName, routes }) {
         openSidenav ? "translate-x-0" : "-translate-x-80"
       } fixed inset-0 z-50 my-4 ml-4 h-[calc(100vh-32px)] w-72 rounded-xl transition-transform duration-300 xl:translate-x-0 border border-blue-gray-100`}
     >
-      <div
-        className={`relative`}
-      >
+      <div className={`relative`}>
         <Link to="/" className="py-6 px-8 text-center">
+          <img src={Logo} alt="Logo" className="h-10 md:h-16 lg:h-20 w-auto mx-auto mb-2" />
           <Typography
             variant="h6"
             color={sidenavType === "dark" ? "white" : "blue-gray"}
@@ -96,8 +96,8 @@ export function Sidenav({ brandImg, brandName, routes }) {
 }
 
 Sidenav.defaultProps = {
-  brandImg: "/img/logo-ct.png",
-  brandName: "Material Tailwind React",
+  brandImg: "",
+  brandName: "Haddiyh Dashboard",
 };
 
 Sidenav.propTypes = {
