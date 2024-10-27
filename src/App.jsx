@@ -20,6 +20,7 @@ function App() {
         {/* Add other dashboard routes here */}
       </Route>
       <Route path="/auth/*" element={<Auth />} />
+      {/* <Route path="/AddProduct" element={<AddProduct />} />  */}
       <Route path="*" element={<Navigate to="/dashboard/home" replace />} />
 
     </Routes>
