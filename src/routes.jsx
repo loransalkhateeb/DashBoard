@@ -9,7 +9,9 @@ import {
 } from "@heroicons/react/24/solid"; // Ensure you import the correct icon
 import { Home, Profile, Tables, Notifications } from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
-import Codes from "./pages/dashboard/Codes";
+import Users from "./pages/dashboard/Users/Users";
+import Brands from "./pages/dashboard/Brands/Brands";
+import Codes from "./pages/dashboard/Codes/Codes";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -28,8 +30,8 @@ export const routes = [
       {
         icon: <UserCircleIcon {...icon} />,
         name: "Users",
-        path: "/profile",
-        element: <Profile />,
+        path: "/users",
+        element: <Users />,
       },
       {
         icon: <ShoppingBagIcon {...icon} />,
@@ -37,15 +39,27 @@ export const routes = [
         path: "/products",
         element: <Tables />,
       },
+      // {
+      //   icon: <TagIcon {...icon} />, // Icon for Brands
+      //   name: "Brands",
+      //   path: "/brands",
+      //   element: <Notifications />, // Adjust this to the correct element if needed
+      // },
       {
         icon: <TagIcon {...icon} />, // Icon for Brands
         name: "Brands",
         path: "/brands",
-        element: <Notifications />, // Adjust this to the correct element if needed
+        element: <Brands />, // Adjust this to the correct element if needed
       },
+      // {
+      //   icon: <CreditCardIcon {...icon} />, // Changed to CreditCardIcon for Coupon Codes
+      //   name: "Codes",
+      //   path: "/codes",
+      //   element: <Codes />, // Adjust this to the correct element if needed
+      // },
       {
-        icon: <CreditCardIcon {...icon} />, // Changed to CreditCardIcon for Coupon Codes
-        name: "Codes",
+        icon: <TagIcon {...icon} />, // Icon for Brands
+        name: "Discount Codes",
         path: "/codes",
         element: <Codes />, // Adjust this to the correct element if needed
       },

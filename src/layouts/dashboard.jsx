@@ -9,6 +9,12 @@ import {
 } from "@/widgets/layout";
 import routes from "@/routes";
 import { useMaterialTailwindController, setOpenConfigurator } from "@/context";
+import AddUser from "@/pages/dashboard/Users/AddUser";
+import UpdateUser from "@/pages/dashboard/Users/UpdateUser";
+import AddBrand from "@/pages/dashboard/Brands/AddBrand";
+import UpdateBrand from "@/pages/dashboard/Brands/UpdateBrand";
+import AddCode from "@/pages/dashboard/Codes/AddCodes";
+import UpdateCode from "@/pages/dashboard/Codes/UpdateCode";
 
 export function Dashboard() {
   const [controller, dispatch] = useMaterialTailwindController();
@@ -42,6 +48,12 @@ export function Dashboard() {
                 <Route exact path={path} element={element} />
               ))
           )}
+            <Route path="adduser" element={<AddUser />} />
+            <Route path="updateuser/:id" element={<UpdateUser />} />
+            <Route path="addbrand" element={<AddBrand />} />
+            <Route path="updatebrand/:id" element={<UpdateBrand />} />
+            <Route path="addcode" element={<AddCode />} />
+            <Route path="updatecode/:id" element={<UpdateCode />} />
         </Routes>
         <div className="text-blue-gray-600">
           <Footer />
