@@ -1,5 +1,13 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Dashboard, Auth } from "@/layouts";
+
+import   AddWatch  from "./pages/dashboard/Products/AddProducts/AddWatches";
+import AddFragrance from "./pages/dashboard/Products/AddProducts/AddFragrance";
+import AddBags from "./pages/dashboard/Products/AddProducts/AddBags";
+
+
+
+
 import AddUser from "./pages/dashboard/Users/AddUser.jsx";
 import UpdateUser from "./pages/dashboard/Users/UpdateUser.jsx";
 import AddBrand from "./pages/dashboard/Brands/AddBrand.jsx";
@@ -11,6 +19,7 @@ import UpdateSlide from "./pages/dashboard/Slider/UpdateSlide.jsx";
 import AddWrapGift from "./pages/dashboard/WrapGift/AddWrapGift.jsx";
 import UpdateWrapGift from "./pages/dashboard/WrapGift/UpdateWrapGift.jsx";
 export const API_URL="http://localhost:1010";
+
 function App() {
   return (
     <Routes>
@@ -25,10 +34,12 @@ function App() {
         <Route path="updateslide/:id" element={<UpdateSlide />} />
         <Route path="addwrapgift" element={<AddWrapGift />} />
         <Route path="updatewrapgift/:id" element={<UpdateWrapGift />} />
-        {/* Add other dashboard routes here */}
+      
       </Route>
       <Route path="/auth/*" element={<Auth />} />
-      {/* <Route path="/AddProduct" element={<AddProduct />} />  */}
+      <Route path="/addwatches" element={<AddWatch/>} />
+      <Route path="/addfragrance" element={<AddFragrance/>} />
+      <Route path="/addbags" element={<AddBags/>} />
       <Route path="*" element={<Navigate to="/dashboard/home" replace />} />
 
     </Routes>

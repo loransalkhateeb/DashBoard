@@ -11,7 +11,7 @@ import {
 import { PencilIcon, TrashIcon, PlusIcon } from "@heroicons/react/24/outline";
 import Swal from 'sweetalert2';
 
-export function Tables() {
+export function Products() {
   const [products, setProducts] = useState([]); 
   const [loading, setLoading] = useState(true); 
   const navigate = useNavigate(); 
@@ -60,24 +60,25 @@ export function Tables() {
         const addWatchesBtn = document.getElementById('addWatches');
         const addFragranceBtn = document.getElementById('addFragrance');
         const addBagBtn = document.getElementById('addBag');
-  
+
         addWatchesBtn.addEventListener('click', () => {
           Swal.close();
+          navigate('/dashboard/addwatches', { replace: true }); 
         });
-  
+
         addFragranceBtn.addEventListener('click', () => {
           Swal.close();
+          navigate('/dashboard/addfragrance'); 
         });
-  
+
         addBagBtn.addEventListener('click', () => {
           Swal.close();
-          
+          navigate('/dashboard/addbags'); 
         });
       },
     });
   };
-  
-  
+
   const handleDelete = async (id) => {
     const result = await Swal.fire({
       title: 'Are you sure to delete this product?',
@@ -130,14 +131,13 @@ export function Tables() {
         </CardHeader>
         <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
           <div className="flex justify-start mb-4">
-          <Button
-  onClick={handleAddProduct} 
-  className="flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-green-500"
-  style={{ marginLeft: '80px' }} 
->
-  <PlusIcon className="h-5 w-5 mr-1" /> Add Product
-</Button>
-
+            <Button
+              onClick={handleAddProduct} 
+              className="flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-green-500"
+              style={{ marginLeft: '80px' }} 
+            >
+              <PlusIcon className="h-5 w-5 mr-1" /> Add Product
+            </Button>
           </div>
           <table className="w-full min-w-[640px] table-auto">
             <thead>
@@ -235,4 +235,4 @@ export function Tables() {
   );
 }
 
-export default Tables;
+export default Products;
