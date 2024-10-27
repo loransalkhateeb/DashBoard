@@ -17,70 +17,74 @@ import {
     Chip,
     Tooltip,
     Progress,
-    Button
+    Button,
+    slider
   } from "@material-tailwind/react";
   import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
   import { authorsTableData, projectsTableData } from "@/data";
-function Brands() {
+function Slider() {
     const navigate = useNavigate();
-    const [brands, setBrands] = useState([]);
-    const [showModal, setShowModal] = useState(false);
-    const [brandIdToDelete, setBrandIdToDelete] = useState(null); // Store the ID of the brand to delete
-  
-    const handleShow = (id) => {
-      setBrandIdToDelete(id); // Set the brand ID to delete
-      setShowModal(true);
-    };
-  
-    const handleClose = () => {
-      setShowModal(false);
-      setBrandIdToDelete(null); // Reset the ID when closing
-    };
-  
-    const fetchBrands = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/product/get/brands`);
-        setBrands(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-  
-    const handleDelete = async (id) => {
-      try {
-        await axios.delete(`${API_URL}/product/delete/brand/${id}`);
-        setBrands(brands.filter((b) => b.id !== id));
-      } catch (error) {
-        console.error(error);
-      }
-    };
-  
-    useEffect(() => {
-      fetchBrands();
-    }, []);
-  
+  const [Slider, setSlider] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [sliderIdToDelete, setsliderIdToDelete] = useState(null); // Store the ID of the slide to delete
+
+  const handleShow = (id) => {
+    setsliderIdToDelete(id); // Set the slide ID to delete
+    setShowModal(true);
+  };
+
+  const handleClose = () => {
+    setShowModal(false);
+    setsliderIdToDelete(null); // Reset the ID when closing
+  };
+
+  const fetchSlider = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/slider`);
+      setSlider(response.data);
+      
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${API_URL}/slider/delete/${id}`);
+      setSlider(Slider.filter((b) => b.id !== id));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSlider();
+  }, []);
   return (
     <>
-    {/* <Link to="/dashboard/addbrand"><Button className="mt-6" >Add Brand</Button></Link> */}
+    {/* <Button className="mt-6" >Add slides</Button> */}
+   
     <div className="mt-12 mb-8 flex flex-col gap-12">
         
     <Card>
       <CardHeader variant="gradient" color="gray" className="mb-8 p-6">
         <Typography variant="h6" color="white">
-          Brands Table
+         Slider Table
         </Typography>
       </CardHeader>
       <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
-      <Link to="/dashboard/addbrand"><Button
+      <Link to="/dashboard/addslide">
+    <Button
   className="flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-green-500"
   style={{ marginLeft: '80px' }} 
 >
-  <PlusIcon className="h-5 w-5 mr-1" /> Add Brand
-</Button></Link>
+  <PlusIcon className="h-5 w-5 mr-1" /> Add Slide
+</Button>
+</Link>
         <table className="w-full min-w-[640px] table-auto">
           <thead>
             <tr>
-              {["Brand Name","Image","Action"].map((el) => (
+              {["Title","Subtitle","Link To","Image","Action"].map((el) => (
                 <th
                   key={el}
                   className="border-b border-blue-gray-50 py-3 px-5 text-left"
@@ -96,13 +100,13 @@ function Brands() {
             </tr>
           </thead>
           <tbody>
-            {brands.map(
-              (brand,index) => {
-                const className = `py-3 px-5 ${index === brands.length - 1 ? "" : "border-b border-blue-gray-50"}`;
+            {Slider.map(
+              (slides,index) => {
+                const className = `py-3 px-5 ${index === Slider.length - 1 ? "" : "border-b border-blue-gray-50"}`;
 
 
                 return (
-                  <tr key={brand.id}>
+                  <tr key={slides.id}>
                     <td className={className}>
                       <div className="flex items-center gap-4">
                         {/* <Avatar src={img} alt={name} size="sm" variant="rounded" /> */}
@@ -112,10 +116,10 @@ function Brands() {
                             color="blue-gray"
                             className="font-semibold"
                           >
-                            {brand.brand_name}
+                            {slides.title}
                           </Typography>
                           {/* <Typography className="text-xs font-normal text-blue-gray-500">
-                            {brand.last_name}
+                            {slides.last_name}
                           </Typography> */}
 
                         </div>
@@ -123,33 +127,41 @@ function Brands() {
                     </td>
                     <td className={className}>
                       <Typography className="text-xs font-semibold text-blue-gray-600">
-                      <Avatar src={`${API_URL}/${brand.brand_img}`}alt={"brand"} size="md" variant="rounded" />
+                      <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-semibold"
+                          >
+                            {slides.subtitle}
+                          </Typography>
                       </Typography>
                     </td>
-                    {/* <td className={className}>
-
-                    <MdDelete
-                    size="1.5rem"
-                    className="delete_icon"
-                    onClick={() => handleShow(brand.id)} // Pass the brand ID to handleShow
-                  />
-                  <FaEdit
-                    size="1.5rem"
-                    className="edit_icon"
-                    onClick={() => navigate(`/dashboard/updatebrand/${brand.id}`)}
-                  />
-
-                    </td> */}
-                      <td className={className}>
+                    <td className={className}>
+                      <Typography className="text-xs font-semibold text-blue-gray-600">
+                      <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-semibold"
+                          >
+                            {slides.link_to}
+                          </Typography>
+                      </Typography>
+                    </td>
+                    <td>
+                    <Typography className="text-xs font-semibold text-blue-gray-600">
+                      <Avatar src={`${API_URL}/${slides.img}`}alt={"slide"} size="md" variant="rounded" />
+                      </Typography>
+                    </td>
+                     <td className={className}>
                         <div className="flex items-center">
                           <Button 
-                    onClick={() => navigate(`/dashboard/updatebrand/${brand.id}`)}
-                    className="mr-2 flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-blue-500"
+                            onClick={() => navigate(`/dashboard/updateslide/${slides.id}`)}
+                            className="mr-2 flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-blue-500"
                           >
                             <PencilIcon className="h-5 w-5 mr-1" /> Edit
                           </Button>
                           <Button 
-                    onClick={() => handleShow(brand.id)} // Pass the brand ID to handleShow
+                    onClick={() => handleShow(slides.id)} // Pass the slides ID to handleShow
                     className="text-red-600 flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-red-500"
                           >
                             <TrashIcon className="h-5 w-5 mr-1" /> Delete
@@ -168,11 +180,11 @@ function Brands() {
         showModal={showModal} 
         handleClose={handleClose} 
         handleDelete={handleDelete} 
-       id={brandIdToDelete} // Pass the brand ID to DeleteModule
+       id={sliderIdToDelete} // Pass the slides ID to DeleteModule
       />
   </div>  
   </>
   )
 }
 
-export default Brands
+export default Slider

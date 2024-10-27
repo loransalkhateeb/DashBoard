@@ -15,6 +15,10 @@ import AddBrand from "@/pages/dashboard/Brands/AddBrand";
 import UpdateBrand from "@/pages/dashboard/Brands/UpdateBrand";
 import AddCode from "@/pages/dashboard/Codes/AddCodes";
 import UpdateCode from "@/pages/dashboard/Codes/UpdateCode";
+import AddSlide from "@/pages/dashboard/Slider/AddSlide";
+import UpdateSlide from "@/pages/dashboard/Slider/UpdateSlide";
+import AddWrapGift from "@/pages/dashboard/WrapGift/AddWrapGift";
+import UpdateWrapGift from "@/pages/dashboard/WrapGift/UpdateWrapGift";
 
 export function Dashboard() {
   const [controller, dispatch] = useMaterialTailwindController();
@@ -54,6 +58,10 @@ export function Dashboard() {
             <Route path="updatebrand/:id" element={<UpdateBrand />} />
             <Route path="addcode" element={<AddCode />} />
             <Route path="updatecode/:id" element={<UpdateCode />} />
+            <Route path="addslide" element={<AddSlide />} />
+            <Route path="updateslide/:id" element={<UpdateSlide />} />
+            <Route path="addwrapgift" element={<AddWrapGift />} />
+            <Route path="updatewrapgift/:id" element={<UpdateWrapGift />} />
         </Routes>
         <div className="text-blue-gray-600">
           <Footer />

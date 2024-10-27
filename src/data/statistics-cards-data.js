@@ -4,7 +4,20 @@ import {
   UsersIcon,
   ChartBarIcon,
 } from "@heroicons/react/24/solid";
-
+import { useEffect,useState } from "react";
+// const [users, setusers] = useState([]);
+// export const fetchusers = async () => {
+//   try {
+//     const response = await axios.get(`${API_URL}/auth/getalluser`);
+//     setusers(response.data);
+//     console.log("first user",response.data)
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
+// useEffect(()=>{
+// fetchusers();
+// },[])
 export const statisticsCardsData = [
   {
     color: "gray",

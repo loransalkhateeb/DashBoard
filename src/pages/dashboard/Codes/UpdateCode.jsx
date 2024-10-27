@@ -42,7 +42,7 @@ function UpdateCode() {
                 icon: "success",
                 confirmButtonText: "OK",
             });
-            navigate('/codes');
+            navigate('/dashboard/codes');
         } catch (error) {
             console.error(error);
             Swal.fire({
@@ -61,57 +61,55 @@ function UpdateCode() {
         });
     };
 
-  return (
-    <section className="m-8 flex gap-4">
-      <div className="w-full mt-24">
-        <div className="text-center">
-          <Typography variant="h2" className="font-bold mb-4">Update Discount Code</Typography>
-        </div>
-        <form className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2" onSubmit={handleUpdateDiscountCode}>
-          <div className="grid grid-cols-1 gap-6 ">
-            {/* Brand Name Input */}
-            <div className="flex flex-col">
-              <Typography variant="small" color="blue-gray" className="mb-2 font-medium">Code:</Typography>
-              <Input
-                size="lg"
-                placeholder="dse1"
-                className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-                value={discountCode.code}
-                        onChange={handleChange}
-                        required
-
-              />
-               <Typography variant="small" color="blue-gray" className="mb-2 font-medium">Discount Percentage:</Typography>
-              <Input
-                size="lg"
-                placeholder="25.00"
-                className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-                value={discountCode.discount_percentage}
-                onChange={handleChange}
-                        required
-
-              />
-                <Typography variant="small" color="blue-gray" className="mb-2 font-medium">Expiration Date:</Typography>
-              <Input
-                size="lg"
-                placeholder="25.00"
-                className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-                value={discountCode.expiration_date}
-                onChange={handleChange}
-                        required
-
-              />
+    return (
+        <section className="m-8 flex gap-4">
+            <div className="w-full mt-24">
+                <div className="text-center">
+                    <Typography variant="h2" className="font-bold mb-4">Update Discount Code</Typography>
+                </div>
+                <form className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2" onSubmit={handleUpdateDiscountCode}>
+                    <div className="grid grid-cols-1 gap-6">
+                        <div className="flex flex-col">
+                            <Typography variant="small" color="blue-gray" className="mb-2 font-medium">Code:</Typography>
+                            <Input
+                                name="code" // Ensure name is set for correct state mapping
+                                size="lg"
+                                placeholder="dse1"
+                                className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+                                value={discountCode.code}
+                                onChange={handleChange}
+                                required
+                            />
+                            <Typography variant="small" color="blue-gray" className="mb-2 font-medium">Discount Percentage:</Typography>
+                            <Input
+                                name="discount_percentage" // Ensure name is set for correct state mapping
+                                size="lg"
+                                placeholder="25.00"
+                                className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+                                value={discountCode.discount_percentage}
+                                onChange={handleChange}
+                                required
+                            />
+                            <Typography variant="small" color="blue-gray" className="mb-2 font-medium">Expiration Date:</Typography>
+                            <Input
+                            type='date'
+                                name="expiration_date" // Ensure name is set for correct state mapping
+                                size="lg"
+                                placeholder="2023-12-31"
+                                className="!border-t-blue-gray-200 focus:!border-t-blue-gray-900"
+                                value={discountCode.expiration_date}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                    </div>
+                    <Button type="submit" className="mt-6" fullWidth>
+                        Update Code
+                    </Button>
+                </form>
             </div>
-
-           
-          </div>
-          <Button type="submit" className="mt-6" fullWidth>
-            Update Code
-          </Button>
-        </form>
-      </div>
-    </section>
-  );
+        </section>
+    );
 }
 
 export default UpdateCode;

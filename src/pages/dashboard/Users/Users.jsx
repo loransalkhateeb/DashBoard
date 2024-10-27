@@ -6,6 +6,8 @@ import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import DeleteModule from "../../../Components/DeleteModule.jsx"
+import { PencilIcon, TrashIcon, PlusIcon } from "@heroicons/react/24/outline";
+
 import {
     Card,
     CardHeader,
@@ -59,7 +61,6 @@ function Users() {
     }, []);
   return (
     <>
-    <Link to="/dashboard/adduser"><Button className="mt-6" >Add User</Button></Link>
     <div className="mt-12 mb-8 flex flex-col gap-12">
         
     <Card>
@@ -69,6 +70,12 @@ function Users() {
         </Typography>
       </CardHeader>
       <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
+      <Link to="/dashboard/adduser"><Button
+  className="flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-green-500"
+  style={{ marginLeft: '80px' }} 
+>
+  <PlusIcon className="h-5 w-5 mr-1" /> Add User
+</Button></Link> 
         <table className="w-full min-w-[640px] table-auto">
           <thead>
             <tr>
@@ -130,7 +137,7 @@ function Users() {
                         {user.balance}
                       </Typography>
                     </td>
-                    <td className={className}>
+                    {/* <td className={className}>
 
                     <MdDelete
                     size="1.5rem"
@@ -143,7 +150,22 @@ function Users() {
                     onClick={() => navigate(`/dashboard/updateuser/${user.id}`)}
                   />
 
-                    </td>
+                    </td> */}
+                     <td className={className}>
+                        <div className="flex items-center">
+                          <Button 
+                    onClick={() => navigate(`/dashboard/updateuser/${user.id}`)}
+                    className="mr-2 flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-blue-500"
+                          >
+                            <PencilIcon className="h-5 w-5 mr-1" /> Edit
+                          </Button>
+                          <Button 
+  onClick={() => handleShow(user.id)}                    className="text-red-600 flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-red-500"
+                          >
+                            <TrashIcon className="h-5 w-5 mr-1" /> Delete
+                          </Button>
+                        </div>
+                      </td>
                   </tr>
                 );
               }

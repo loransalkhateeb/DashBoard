@@ -11,31 +11,33 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import axios from 'axios'; // Ensure Axios is imported
 
-function AddBrand() {
-    const [brand_name, setBrandName] = useState("");
-    const [brand_img, setBrandImg] = useState(null);
+function AddWrapGift() {
+    const [wrap_type, setWrap_type] = useState("");
+    const [cost, setCost] = useState("");
+    const [img, setImg] = useState(null);
     const [imgName, setImgName] = useState("");
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-          setBrandImg(file);
+          setImg(file);
             setImgName(file.name); // Set the image name
         } else {
-          setBrandImg(null);
+          setImg(null);
             setImgName(""); // Reset if no file is selected
         }
     };
     const navigate = useNavigate();
-    const handleAddBrand = async (e) => {
+    const handleAddWrapGift = async (e) => {
       e.preventDefault();
       const formData = new FormData();
-      formData.append("brand_name", brand_name);
-      formData.append("brand_img", brand_img);
+      formData.append("wrap_type", wrap_type);
+      formData.append("cost", cost);
+      formData.append("img", img);
   
       try {
         const response = await axios.post(
-          `${API_URL}/product/addbrand`,
+          `${API_URL}/wrapgift/add`,
           formData,
           {
             headers: {
@@ -45,11 +47,11 @@ function AddBrand() {
         );
         Swal.fire({
           title: "Success!",
-          text: "Brand added successful.",
+          text: "Wrap Gift added successful.",
           icon: "success",
           confirmButtonText: "OK",
         });
-        navigate("/dashboard/brands");
+        navigate("/dashboard/wrapgift");
       } catch (error) {
         console.error(error);
         Swal.fire({
@@ -65,22 +67,31 @@ function AddBrand() {
     <section className="m-8 flex gap-4">
       <div className="w-full mt-24">
         <div className="text-center">
-          <Typography variant="h2" className="font-bold mb-4">Add Brand</Typography>
+          <Typography variant="h2" className="font-bold mb-4">Add Wrap Gift</Typography>
         </div>
-        <form className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2" onSubmit={handleAddBrand}>
+        <form className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2" onSubmit={handleAddWrapGift}>
           <div className="grid grid-cols-1 gap-6 ">
             {/* First Column */}
             <div className="flex flex-col">
-              <Typography variant="small" color="blue-gray" className="mb-2 font-medium">Brand Name:</Typography>
+              <Typography variant="small" color="blue-gray" className="mb-2 font-medium">Wrap Type:</Typography>
               <Input
               required
                 size="lg"
-                placeholder="Espirt"
+                placeholder="solid"
                 className="!border-t-blue-gray-200 focus:!border-t-gray-900"
                 onChange={(e) => {
-                    setBrandName(e.target.value);
+                    setWrap_type(e.target.value);
                   }}              />
-                <Typography variant="small" color="blue-gray" className="mb-2 font-medium">Brand Image:</Typography>
+                     <Typography variant="small" color="blue-gray" className="mb-2 font-medium">Cost:</Typography>
+              <Input
+              required
+                size="lg"
+                placeholder="4.00"
+                className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+                onChange={(e) => {
+                    setCost(e.target.value);
+                  }}              />
+                <Typography variant="small" color="blue-gray" className="mb-2 font-medium"> Image:</Typography>
                             <div className="relative">
                                 <input
                                 required
@@ -104,7 +115,7 @@ function AddBrand() {
           </div>
 
           <Button type="submit" className="mt-6" fullWidth>
-            Add Brand
+            Add Wrap Gift
           </Button>
         </form>
       </div>
@@ -112,4 +123,4 @@ function AddBrand() {
   );
 }
 
-export default AddBrand;
+export default AddWrapGift;
