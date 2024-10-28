@@ -7,7 +7,7 @@ import {
   ShoppingBagIcon,
   CreditCardIcon, // Using CreditCardIcon for Coupon Codes
 } from "@heroicons/react/24/solid"; // Ensure you import the correct icon
-import { Home, Profile, Tables, Notifications } from "@/pages/dashboard";
+import { Home, Profile, Notifications, Products } from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
 import Users from "./pages/dashboard/Users/Users";
 import Brands from "./pages/dashboard/Brands/Brands";
@@ -41,7 +41,7 @@ export const routes = [
         icon: <ShoppingBagIcon {...icon} />,
         name: "Products",
         path: "/products",
-        element: <Tables />,
+        element: <Products />,
       },
       // {
       //   icon: <TagIcon {...icon} />, // Icon for Brands
