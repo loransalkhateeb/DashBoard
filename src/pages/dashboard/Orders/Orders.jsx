@@ -13,10 +13,7 @@ import {
     CardHeader,
     CardBody,
     Typography,
-    Avatar,
     Chip,
-    Tooltip,
-    Progress,
     Button
   } from "@material-tailwind/react";
   import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
@@ -26,7 +23,32 @@ function Orders() {
     const [Orders, setOrders] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [orderIdToDelete, setOrderIdToDelete] = useState(null); // Store the ID of the order to delete
-  
+  const [selectedDate, setSelectedDate] = useState("");
+  const [filteredOrders, setFilteredOrders] = useState([]);
+  const filterOrdersByDate = (date) => {
+    const filtered = Orders.filter(order => {
+      const orderDate = new Date(order.date); // Adjust based on your order date structure
+      const selected = new Date(date);
+      return (
+        orderDate.getDate() === selected.getDate() &&
+        orderDate.getMonth() === selected.getMonth() &&
+        orderDate.getFullYear() === selected.getFullYear()
+      );
+    });
+    setFilteredOrders(filtered);
+  };  
+  useEffect(() => {
+    if (selectedDate) {
+      console.log("date selected", selectedDate);
+      filterOrdersByDate(selectedDate);
+      console.log(filteredOrders)
+    } else {
+      setFilteredOrders(Orders); // Reset to all orders if no date is selected
+      console.log(filteredOrders)
+
+    }
+  }, [selectedDate, Orders]);
+
     const handleShow = (id) => {
       setcodeIdToDelete(id); // Set the order ID to delete
       setShowModal(true);
@@ -55,7 +77,6 @@ function Orders() {
           order_id,
           status
         });
-        console.log(response.data);
         Swal.fire({
           title: "Success!",
           text: "Order status updated successful.",
@@ -89,10 +110,22 @@ function Orders() {
         </Typography>
       </CardHeader>
       <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
+        
+<div class="relative max-w-sm">
+  <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+     <svg class="w-4 h-4 ms-3 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
+      </svg>
+  </div>
+  <input value={selectedDate}
+          onChange={e => setSelectedDate(e.target.value)}
+id="datepicker-actions" datepicker datepicker-buttons datepicker-autoselect-today type="date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-50 ms-3 ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date"/>
+</div>
+
         <table className="w-full min-w-[640px] table-auto">
           <thead>
             <tr>
-              {[" Name","Email","address","address optional","city","country","phone","Order Items","shipping method","payment method","total price","order status","status"].map((el) => (
+              {[" Name","Email","address","address optional","city","country","phone","Order Items","shipping method","payment method","total price","Date","order status","status"].map((el) => (
                 <th
                   key={el}
                   className="border-b border-blue-gray-50 py-3 px-5 text-left"
@@ -197,6 +230,11 @@ function Orders() {
                       </Typography>
                     </td>
                     <td className={className}>
+                      <Typography className="text-xs font-semibold text-blue-gray-600" style={{width:"100px"}}>
+                        {order.created_at}
+                      </Typography>
+                    </td>
+                    <td className={className}>
                       {/* <Typography className="text-xs font-semibold text-blue-gray-600">
                         {order.order_status}
                       </Typography> */}
@@ -204,11 +242,12 @@ function Orders() {
   variant="gradient"
   color={order.order_status === "Confirmed" ? "green" :order.order_status === "Pending" ? "blue": "red"}
   value={
-    order.order_status === "Confirmed"
-      ? "Confirmed"
-      : order.order_status === "Pending"
-      ? "Pending"
-      : "Rejected"
+    order.order_status 
+    // === "Confirmed"
+    //   ? "Confirmed"
+    //   : order.order_status === "Pending"
+    //   ? "Pending"
+    //   : "Rejected"
   }
   className="py-0.5 px-2 text-[11px] font-medium w-fit"
 />

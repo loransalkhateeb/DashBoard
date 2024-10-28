@@ -5,7 +5,8 @@ import {
   ServerStackIcon,
   RectangleStackIcon,
   ShoppingBagIcon,
-  CreditCardIcon, // Using CreditCardIcon for Coupon Codes
+  CreditCardIcon,
+  WalletIcon, // Using CreditCardIcon for Coupon Codes
 } from "@heroicons/react/24/solid"; // Ensure you import the correct icon
 import { Home, Profile, Notifications, Products } from "@/pages/dashboard";
 import { SignIn, SignUp } from "@/pages/auth";
@@ -16,6 +17,7 @@ import Orders from "./pages/dashboard/Orders/Orders";
 import Slider from "./pages/dashboard/Slider/Slider";
 import Feedback from "./pages/dashboard/Feedback/Feedback";
 import WrapGift from "./pages/dashboard/WrapGift/WrapGift";
+import Wallet from "./pages/dashboard/Wallet/Wallet";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -66,6 +68,12 @@ export const routes = [
         name: "Orders",
         path: "/orders",
         element: <Orders />, // Adjust this to the correct element if needed
+      },
+      {
+        icon: <WalletIcon {...icon} />, // Icon for Brands
+        name: "Wallet",
+        path: "/wallet",
+        element: <Wallet />, // Adjust this to the correct element if needed
       },
       {
         icon: <CreditCardIcon {...icon} />, // Icon for Brands

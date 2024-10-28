@@ -101,6 +101,7 @@ function AddSlide() {
                 onChange={(e) => setlink_to(e.target.value)}
                 />
                 <Typography variant="small" color="blue-gray" className="mb-2 font-medium"> Image:</Typography>
+                <Typography variant="small" color="blue-gray" className="mb-2 ">It is recommended to use the WebP format for images.</Typography>
                             <div className="relative">
                                 <input
                                 required

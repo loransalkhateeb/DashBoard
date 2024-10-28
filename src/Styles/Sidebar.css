@@ -1,0 +1,14 @@
+/* For webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: 6px; /* Width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Track color */
+    border-radius: 10px; /* Track border radius */
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cacaca; /* Thumb color */
+    border-radius: 10px; /* Thumb border radius */
+}
