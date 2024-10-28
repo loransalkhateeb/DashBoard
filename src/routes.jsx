@@ -9,9 +9,9 @@ import {
   WalletIcon, // Using CreditCardIcon for Coupon Codes
 } from "@heroicons/react/24/solid"; // Ensure you import the correct icon
 
-import { Home, Profile, Products, Notifications } from "@/pages/dashboard";
-=======
-import { Home, Profile, Notifications, Products } from "@/pages/dashboard";
+import { Home, Products, Notifications } from "@/pages/dashboard";
+
+// import { Home,  Notifications, Products } from "@/pages/dashboard";
 
 import { SignIn, SignUp } from "@/pages/auth";
 import Users from "./pages/dashboard/Users/Users";
