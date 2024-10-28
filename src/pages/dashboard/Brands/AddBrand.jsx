@@ -81,6 +81,7 @@ function AddBrand() {
                     setBrandName(e.target.value);
                   }}              />
                 <Typography variant="small" color="blue-gray" className="mb-2 font-medium">Brand Image:</Typography>
+                <Typography variant="small" color="blue-gray" className="mb-2 ">It is recommended to use the WebP format for images.</Typography>
                             <div className="relative">
                                 <input
                                 required

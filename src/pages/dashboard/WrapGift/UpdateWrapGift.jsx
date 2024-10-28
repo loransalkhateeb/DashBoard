@@ -111,6 +111,8 @@ function UpdateWrapGift() {
                             {existing_img && (
                                 <img src={`${API_URL}/${existing_img}`} alt="Existing wrap gift" className="mb-2 w-32 h-32 object-cover" />
                             )}
+                <Typography variant="small" color="blue-gray" className="mb-2 ">It is recommended to use the WebP format for images.</Typography>
+
                             <div className="relative">
                                 <input
                                     type="file"
