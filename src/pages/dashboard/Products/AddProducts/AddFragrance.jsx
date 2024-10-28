@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Input, Button, Typography } from "@material-tailwind/react";
 import Swal from 'sweetalert2';
 
@@ -20,13 +20,43 @@ export function AddFragrance() {
     img: null,
   });
 
+  const [brands, setBrands] = useState([]);
+  const [fragranceTypes, setFragranceTypes] = useState([]);
+
+  const fetchBrands = useCallback(async () => {
+    try {
+      const response = await fetch('http://localhost:1010/product/get/brands');
+      if (!response.ok) throw new Error('Failed to fetch brands');
+      const data = await response.json();
+      setBrands(data);
+    } catch (error) {
+      console.error('Error fetching brands:', error);
+    }
+  }, []);
+
+  const fetchFragranceTypes = useCallback(async () => {
+    try {
+      const response = await fetch('http://localhost:1010/fragrancetypeid/getfragrancetypeid');
+      if (!response.ok) throw new Error('Failed to fetch fragrance types');
+      const data = await response.json();
+      setFragranceTypes(data);
+    } catch (error) {
+      console.error('Error fetching fragrance types:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchBrands();
+    fetchFragranceTypes();
+  }, [fetchBrands, fetchFragranceTypes]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProductData({ ...productData, [name]: value });
+    setProductData(prevData => ({ ...prevData, [name]: value }));
   };
 
   const handleFileChange = (e) => {
-    setProductData({ ...productData, img: e.target.files[0] });
+    setProductData(prevData => ({ ...prevData, img: e.target.files[0] }));
   };
 
   const validateData = () => {
@@ -49,9 +79,9 @@ export function AddFragrance() {
     if (!validateData()) return;
 
     const formDataToSend = new FormData();
-    for (const key in productData) {
-      formDataToSend.append(key, productData[key] || '');
-    }
+    Object.entries(productData).forEach(([key, value]) => {
+      formDataToSend.append(key, key === 'instock' ? (value === 'yes' ? 'yes' : 'no') : value);
+    });
 
     try {
       const response = await fetch('http://localhost:1010/product/add', {
@@ -59,19 +89,13 @@ export function AddFragrance() {
         body: formDataToSend,
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Network response was not ok: ${errorText}`);
-      }
+      if (!response.ok) throw new Error(`Network response was not ok: ${await response.text()}`);
 
-      const data = await response.json();
-      console.log('Success:', data);
       Swal.fire({
-        title: 'Successfully Adding!',
+        title: 'Successfully Added!',
         text: 'The product has been added successfully',
         icon: 'success',
         confirmButtonText: 'Ok',
-        confirmButtonColor: '#007BFF', 
       });
 
       setProductData({
@@ -101,6 +125,14 @@ export function AddFragrance() {
     }
   };
 
+  const brandOptions = useMemo(() => brands.map(brand => (
+    <option key={brand.id} value={brand.id}>{brand.brand_name}</option>
+  )), [brands]);
+
+  const fragranceTypeOptions = useMemo(() => fragranceTypes.map(type => (
+    <option key={type.FragranceTypeID} value={type.FragranceTypeID}>{type.TypeName}</option>
+  )), [fragranceTypes]);
+
   return (
     <section className="m-8 flex justify-center">
       <div className="w-full lg:w-3/5 mt-16">
@@ -108,10 +140,35 @@ export function AddFragrance() {
           <Typography variant="h2" className="font-bold mb-4">Add Fragrance</Typography>
           <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Fill in the details below to add a new product.</Typography>
         </div>
-        <form onSubmit={handleSubmit} className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2">
+        <form onSubmit={handleSubmit} className="mt-8 mb-2 mx-auto w-full max-w-screen-lg">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             {Object.entries(productData).map(([key, value]) => (
-              key !== 'img' ? (
+              key === 'brandID' ? (
+                <div key={key}>
+                  <Typography variant="small" className="block mb-1">Brand</Typography>
+                  <select name={key} value={value} onChange={handleChange} className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select a brand</option>
+                    {brandOptions}
+                  </select>
+                </div>
+              ) : key === 'FragranceTypeID' ? (
+                <div key={key}>
+                  <Typography variant="small" className="block mb-1">Fragrance Type</Typography>
+                  <select name={key} value={value} onChange={handleChange} className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select a fragrance type</option>
+                    {fragranceTypeOptions}
+                  </select>
+                </div>
+              ) : key === 'instock' ? (
+                <div key={key}>
+                  <Typography variant="small" className="block mb-1">Choose Status</Typography>
+                  <select name={key} value={value} onChange={handleChange} className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Choose Status</option>
+                    <option value="yes">In Stock</option>
+                    <option value="no">Out of Stock</option>
+                  </select>
+                </div>
+              ) : key !== 'img' ? (
                 <div key={key}>
                   <Typography variant="small" className="block mb-1">{key.replace(/_/g, ' ')}</Typography>
                   <Input name={key} value={value} onChange={handleChange} />

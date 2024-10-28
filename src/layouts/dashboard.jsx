@@ -23,10 +23,11 @@ import AddWrapGift from "@/pages/dashboard/WrapGift/AddWrapGift";
 import UpdateWrapGift from "@/pages/dashboard/WrapGift/UpdateWrapGift";
 
 
-// import { useMaterialTailwindController, setOpenConfigurator } from "@/context";
+
 import { AddWatch } from "@/pages/dashboard/Products/AddProducts/AddWatches";
 import AddFragrance from "@/pages/dashboard/Products/AddProducts/AddFragrance";
 import AddProduct, { AddBags } from "@/pages/dashboard/Products/AddProducts/AddBags";
+import UpdateProducts from "@/pages/dashboard/Products/UpdateProducts";
 export function Dashboard() {
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavType } = controller;
@@ -74,6 +75,7 @@ export function Dashboard() {
             <Route path="updateslide/:id" element={<UpdateSlide />} />
             <Route path="addwrapgift" element={<AddWrapGift />} />
             <Route path="updatewrapgift/:id" element={<UpdateWrapGift />} />
+            <Route path="updateproduct/:id" element={<UpdateProducts />} /> 
 
         </Routes>
         <div className="text-blue-gray-600">

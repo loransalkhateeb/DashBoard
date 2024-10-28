@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Input, Button, Typography } from "@material-tailwind/react";
 import Swal from 'sweetalert2';
 
@@ -15,17 +15,48 @@ export function AddWatch() {
     available: '',
     before_price: '',
     after_price: '',
-    inStock: '',
-    img: null,
+    instock: '',
+    img: [],
   });
+
+  const [brands, setBrands] = useState([]);
+  const [watchTypes, setWatchTypes] = useState([]);
+
+  const fetchBrands = useCallback(async () => {
+    try {
+      const response = await fetch('http://localhost:1010/product/get/brands');
+      if (!response.ok) throw new Error('Failed to fetch brands');
+      const data = await response.json();
+      setBrands(data);
+    } catch (error) {
+      console.error('Error fetching brands:', error);
+    }
+  }, []);
+
+  const fetchWatchTypes = useCallback(async () => {
+    try {
+      const response = await fetch('http://localhost:1010/producttypeid/getwatchtypeid');
+      if (!response.ok) throw new Error('Failed to fetch watch types');
+      const data = await response.json();
+      setWatchTypes(data);
+    } catch (error) {
+      console.error('Error fetching watch types:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchBrands();
+    fetchWatchTypes();
+  }, [fetchBrands, fetchWatchTypes]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProductData({ ...productData, [name]: value });
+    setProductData(prevData => ({ ...prevData, [name]: value }));
   };
 
   const handleFileChange = (e) => {
-    setProductData({ ...productData, img: e.target.files[0] });
+    const files = Array.from(e.target.files);
+    setProductData(prevData => ({ ...prevData, img: files }));
   };
 
   const validateData = () => {
@@ -49,7 +80,13 @@ export function AddWatch() {
 
     const formDataToSend = new FormData();
     for (const key in productData) {
-      formDataToSend.append(key, productData[key] || '');
+      if (key === 'instock') {
+        formDataToSend.append(key, productData[key] === 'Yes' ? 'yes' : 'no');
+      } else if (key === 'img') {
+        productData.img.forEach(file => formDataToSend.append('img', file));
+      } else {
+        formDataToSend.append(key, productData[key]);
+      }
     }
 
     try {
@@ -66,11 +103,11 @@ export function AddWatch() {
       const data = await response.json();
       console.log('Success:', data);
       Swal.fire({
-        title: 'Successfully Adding!',
+        title: 'Successfully Added!',
         text: 'The product has been added successfully',
         icon: 'success',
         confirmButtonText: 'Ok',
-        confirmButtonColor: '#007BFF'
+        confirmButtonColor: '#007BFF',
       });
 
       setProductData({
@@ -85,8 +122,8 @@ export function AddWatch() {
         available: '',
         before_price: '',
         after_price: '',
-        inStock: '',
-        img: null,
+        instock: '',
+        img: [],
       });
     } catch (error) {
       console.error('Error:', error);
@@ -99,37 +136,69 @@ export function AddWatch() {
     }
   };
 
+  const brandOptions = useMemo(() => brands.map(brand => (
+    <option key={brand.id} value={brand.id}>{brand.brand_name}</option>
+  )), [brands]);
+
+  const watchTypeOptions = useMemo(() => watchTypes.map(type => (
+    <option key={type.WatchTypeID} value={type.WatchTypeID}>{type.TypeName}</option>
+  )), [watchTypes]);
+
   return (
-    <section className="relative h-screen flex justify-center items-center bg-cover bg-center" style={{ backgroundImage: 'url(https://www.shutterstock.com/image-photo/closeup-luxury-automatic-wristwatch-men-260nw-693928489.jpg)' }}>
-      <div className="absolute inset-0 bg-black opacity-60"></div>
-      <div className="relative w-full lg:w-4/5 z-10 mt-5"> 
-        <div className="text-center">
-          <Typography variant="h2" className="font-bold mb-4 text-white">Add Watches</Typography>
+    <section className="m-8 flex justify-center">
+      <div className="w-full lg:w-3/5 mt-16">
+        <div className="text-center mb-6">
+          <Typography variant="h2" className="font-bold mb-4">Add Watch</Typography>
+          <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Fill in the details below to add a new product.</Typography>
         </div>
-        <form onSubmit={handleSubmit} className="mt-8 mb-2 mx-auto w-full max-w-3xl bg-black bg-opacity-20 rounded-lg shadow-lg p-6">
+        <form onSubmit={handleSubmit} className="mt-8 mb-2 mx-auto w-full max-w-screen-lg">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             {Object.entries(productData).map(([key, value]) => (
-              key !== 'img' ? (
+              key === 'brandID' ? (
                 <div key={key}>
-                  <Typography variant="small" className="block mb-1 text-white">{key.replace(/_/g, ' ')}</Typography>
-                  <Input name={key} value={value} onChange={handleChange} className="text-black" />
+                  <Typography variant="small" className="block mb-1">Brand</Typography>
+                  <select name={key} value={value} onChange={handleChange} className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select a brand</option>
+                    {brandOptions}
+                  </select>
+                </div>
+              ) : key === 'WatchTypeID' ? (
+                <div key={key}>
+                  <Typography variant="small" className="block mb-1">Watch Type</Typography>
+                  <select name={key} value={value} onChange={handleChange} className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select a watch type</option>
+                    {watchTypeOptions}
+                  </select>
+                </div>
+              ) : key === 'instock' ? (
+                <div key={key}>
+                  <Typography variant="small" className="block mb-1">Choose Status</Typography>
+                  <select name={key} value={value} onChange={handleChange} className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Choose Status</option>
+                    <option value="Yes">In Stock</option>
+                    <option value="No">Out of Stock</option>
+                  </select>
+                </div>
+              ) : key !== 'img' ? (
+                <div key={key}>
+                  <Typography variant="small" className="block mb-1">{key.replace(/_/g, ' ')}</Typography>
+                  <Input name={key} value={value} onChange={handleChange} />
                 </div>
               ) : (
                 <div key={key}>
-                  <Typography variant="small" className="block mb-1 text-white">Image</Typography>
-                  <Input type="file" name={key} onChange={handleFileChange} />
+                  <Typography variant="small" className="block mb-1">Image</Typography>
+                  <Input type="file" name={key} onChange={handleFileChange} multiple />
                 </div>
               )
             ))}
           </div>
-          <Button type="submit" className="mt-4 bg-white bg-opacity-50 text-black hover:bg-opacity-70 w-1/2 mx-auto" fullWidth>
+          <Button type="submit" className="mt-4" fullWidth>
             Add Watch
           </Button>
         </form>
       </div>
     </section>
   );
-  
 }
 
 export default AddWatch;
