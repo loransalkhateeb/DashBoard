@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom"; 
 import {
   Card,
@@ -57,21 +57,17 @@ export function Products() {
       width: '600px', 
       padding: '20px', 
       didOpen: () => {
-        const addWatchesBtn = document.getElementById('addWatches');
-        const addFragranceBtn = document.getElementById('addFragrance');
-        const addBagBtn = document.getElementById('addBag');
-
-        addWatchesBtn.addEventListener('click', () => {
+        document.getElementById('addWatches').addEventListener('click', () => {
           Swal.close();
           navigate('/dashboard/addwatches', { replace: true }); 
         });
 
-        addFragranceBtn.addEventListener('click', () => {
+        document.getElementById('addFragrance').addEventListener('click', () => {
           Swal.close();
           navigate('/dashboard/addfragrance'); 
         });
 
-        addBagBtn.addEventListener('click', () => {
+        document.getElementById('addBag').addEventListener('click', () => {
           Swal.close();
           navigate('/dashboard/addbags'); 
         });
@@ -121,6 +117,51 @@ export function Products() {
     }
   };
 
+  const renderedProducts = useMemo(() => {
+    return products.map(({ id, name, brand_name, sale, instock, after_price, before_price, first_image }, key) => {
+      const className = `py-3 px-5 ${key === products.length - 1 ? "" : "border-b border-blue-gray-50"}`;
+
+      return (
+        <tr key={id}>
+          <td className={className}>
+            <Typography variant="small" color="blue-gray" className="font-semibold">{id}</Typography>
+          </td>
+          <td className={className}>
+            <Typography variant="small" color="blue-gray" className="font-semibold">{name}</Typography>
+          </td>
+          <td className={className}>
+            <Typography variant="small" color="blue-gray" className="font-semibold">{brand_name}</Typography>
+          </td>
+          <td className={className}>
+            <Chip variant="gradient" color={sale === "yes" ? "red" : "green"} value={sale === "yes" ? "On Sale" : "Not on Sale"} className="py-0.5 px-2 text-[11px] font-medium w-fit" />
+          </td>
+          <td className={className}>
+            <Typography variant="small" color="blue-gray" className="font-semibold">{instock !== null ? "In Stock" : "Out of Stock"}</Typography>
+          </td>
+          <td className={className}>
+            <Typography variant="small" color="blue-gray" className="font-semibold">{after_price !== null ? `$${after_price}` : "N/A"}</Typography>
+          </td>
+          <td className={className}>
+            <Typography variant="small" color="blue-gray" className="font-semibold">{before_price !== null ? `$${before_price}` : "N/A"}</Typography>
+          </td>
+          <td className={className}>
+            {first_image && <img src={`http://localhost:1010/${first_image}`} alt={name} className="w-16 h-16 object-cover rounded" />}
+          </td>
+          <td className={className}>
+            <div className="flex items-center">
+              <Button onClick={() => navigate(`/dashboard/updateproduct/${id}`)} className="mr-2 flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-blue-500">
+                <PencilIcon className="h-5 w-5 mr-1" /> Edit
+              </Button>
+              <Button onClick={() => handleDelete(id)} className="text-red-600 flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-red-500">
+                <TrashIcon className="h-5 w-5 mr-1" /> Delete
+              </Button>
+            </div>
+          </td>
+        </tr>
+      );
+    });
+  }, [products]);
+
   return (
     <div className="mt-12 mb-8 flex flex-col gap-12">
       <Card>
@@ -129,7 +170,7 @@ export function Products() {
             Products Table
           </Typography>
         </CardHeader>
-        <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
+        <CardBody className="overflow-x-auto px-0 pt-0 pb-2">
           <div className="flex justify-start mb-4">
             <Button
               onClick={handleAddProduct} 
@@ -142,7 +183,7 @@ export function Products() {
           <table className="w-full min-w-[640px] table-auto">
             <thead>
               <tr>
-                {["ID", "Name", "Brand", "Sale", "In Stock", "After Price", "Before Price"].map((el) => (
+                {["ID", "Name", "Brand", "Sale", "In Stock", "After Price", "Before Price", "Image"].map((el) => (
                   <th key={el} className="border-b border-blue-gray-50 py-3 px-5 text-left">
                     <Typography variant="small" className="text-[11px] font-bold uppercase text-blue-gray-400">
                       {el}
@@ -159,73 +200,12 @@ export function Products() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-3">
+                  <td colSpan={9} className="text-center py-3">
                     <Typography className="text-gray-500">Loading...</Typography>
                   </td>
                 </tr>
               ) : (
-                products.map(({ id, name, brand_name, sale, instock, after_price, before_price }, key) => {
-                  const className = `py-3 px-5 ${key === products.length - 1 ? "" : "border-b border-blue-gray-50"}`;
-
-                  return (
-                    <tr key={id}>
-                      <td className={className}>
-                        <Typography variant="small" color="blue-gray" className="font-semibold">
-                          {id}
-                        </Typography>
-                      </td>
-                      <td className={className}>
-                        <Typography variant="small" color="blue-gray" className="font-semibold">
-                          {name}
-                        </Typography>
-                      </td>
-                      <td className={className}>
-                        <Typography variant="small" color="blue-gray" className="font-semibold">
-                          {brand_name}
-                        </Typography>
-                      </td>
-                      <td className={className}>
-                        <Chip
-                          variant="gradient"
-                          color={sale === "yes" ? "red" : "green"}
-                          value={sale === "yes" ? "On Sale" : "Not on Sale"}
-                          className="py-0.5 px-2 text-[11px] font-medium w-fit"
-                        />
-                      </td>
-                      <td className={className}>
-                        <Typography variant="small" color="blue-gray" className="font-semibold">
-                          {instock !== null ? "In Stock" : "Out of Stock"}
-                        </Typography>
-                      </td>
-                      <td className={className}>
-                        <Typography variant="small" color="blue-gray" className="font-semibold">
-                          {after_price !== null ? `$${after_price}` : "N/A"}
-                        </Typography>
-                      </td>
-                      <td className={className}>
-                        <Typography variant="small" color="blue-gray" className="font-semibold">
-                          {before_price !== null ? `$${before_price}` : "N/A"}
-                        </Typography>
-                      </td>
-                      <td className={className}>
-                        <div className="flex items-center">
-                          <Button 
-                            onClick={() => alert("Edit Product")} 
-                            className="mr-2 flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-blue-500"
-                          >
-                            <PencilIcon className="h-5 w-5 mr-1" /> Edit
-                          </Button>
-                          <Button 
-                            onClick={() => handleDelete(id)} 
-                            className="text-red-600 flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-red-500"
-                          >
-                            <TrashIcon className="h-5 w-5 mr-1" /> Delete
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
+                renderedProducts
               )}
             </tbody>
           </table>
