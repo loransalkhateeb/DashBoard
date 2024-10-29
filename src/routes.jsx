@@ -16,14 +16,14 @@ import { BiSolidCoupon } from "react-icons/bi";
 import { Home, Products, Notifications } from "@/pages/dashboard";
 
 
-import { Home, Profile, Products, Notifications } from "@/pages/dashboard";
+import { Profile} from "@/pages/dashboard";
 
 
 
 // import { Home,  Notifications, Products } from "@/pages/dashboard";
 
 
-import { SignIn, SignUp } from "@/pages/auth";
+
 import Users from "./pages/dashboard/Users/Users";
 import Brands from "./pages/dashboard/Brands/Brands";
 import Codes from "./pages/dashboard/Codes/Codes";
