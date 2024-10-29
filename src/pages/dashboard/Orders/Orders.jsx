@@ -21,56 +21,46 @@ import {
 function Orders() {
     const navigate = useNavigate();
     const [Orders, setOrders] = useState([]);
-    const [showModal, setShowModal] = useState(false);
-    const [orderIdToDelete, setOrderIdToDelete] = useState(null); // Store the ID of the order to delete
+    // const [showModal, setShowModal] = useState(false);
+    // const [orderIdToDelete, setOrderIdToDelete] = useState(null); // Store the ID of the order to delete
   const [selectedDate, setSelectedDate] = useState("");
   const [filteredOrders, setFilteredOrders] = useState([]);
-  const filterOrdersByDate = (date) => {
-    const filtered = Orders.filter(order => {
-      const orderDate = new Date(order.date); // Adjust based on your order date structure
-      const selected = new Date(date);
-      return (
-        orderDate.getDate() === selected.getDate() &&
-        orderDate.getMonth() === selected.getMonth() &&
-        orderDate.getFullYear() === selected.getFullYear()
-      );
-    });
-    setFilteredOrders(filtered);
-  };  
+  const fetchOrders = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/orders/getallorders`);
+      setOrders(response.data);
+      setFilteredOrders(response.data); // Set initial filtered orders to all orders
+    } catch (error) {
+      console.error(error);
+    }
+  };
   useEffect(() => {
     if (selectedDate) {
-      console.log("date selected", selectedDate);
-      filterOrdersByDate(selectedDate);
-      console.log(filteredOrders)
+      const filtered = Orders.filter(order => {
+        const orderDate = new Date(order.created_at).toISOString().split('T')[0]; // Format: YYYY-MM-DD
+        return orderDate === selectedDate;
+      });
+      setFilteredOrders(filtered);
+      console.log("first order selected",filtered)
     } else {
       setFilteredOrders(Orders); // Reset to all orders if no date is selected
-      console.log(filteredOrders)
-
     }
   }, [selectedDate, Orders]);
 
-    const handleShow = (id) => {
-      setcodeIdToDelete(id); // Set the order ID to delete
-      setShowModal(true);
-    };
+    // const handleShow = (id) => {
+    //   setcodeIdToDelete(id); // Set the order ID to delete
+    //   setShowModal(true);
+    // };
   
-    const handleClose = () => {
-      setShowModal(false);
-      setOrderIdToDelete(null); // Reset the ID when closing
-    };
-  
-    const fetchOrders = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/orders/getallorders`);
-        setOrders(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+    // const handleClose = () => {
+    //   setShowModal(false);
+    //   setOrderIdToDelete(null); // Reset the ID when closing
+    // };
   
     useEffect(() => {
       fetchOrders();
     }, []);
+  
     const handleStatusOrder = async (order_id, status) => {
       try {
         const response = await axios.post(`${API_URL}/orders/confirmorrejectorder`, {
@@ -141,7 +131,8 @@ id="datepicker-actions" datepicker datepicker-buttons datepicker-autoselect-toda
             </tr>
           </thead>
           <tbody>
-            {Orders.map(
+            {filteredOrders.length > 0 ? 
+            filteredOrders.map(
               (order,index) => {
                 const className = `py-3 px-5 ${index === Orders.length - 1 ? "" : "border-b border-blue-gray-50"}`;
 
@@ -235,61 +226,41 @@ id="datepicker-actions" datepicker datepicker-buttons datepicker-autoselect-toda
                       </Typography>
                     </td>
                     <td className={className}>
-                      {/* <Typography className="text-xs font-semibold text-blue-gray-600">
-                        {order.order_status}
-                      </Typography> */}
                      <Chip
   variant="gradient"
   color={order.order_status === "Confirmed" ? "green" :order.order_status === "Pending" ? "blue": "red"}
   value={
     order.order_status 
-    // === "Confirmed"
-    //   ? "Confirmed"
-    //   : order.order_status === "Pending"
-    //   ? "Pending"
-    //   : "Rejected"
   }
   className="py-0.5 px-2 text-[11px] font-medium w-fit"
 />
 
                     </td>
                     {order.order_status === "Pending" ? (
-                //   <div>
-                //     <button
-                //       type="button"
-                //       className="btn btn-success d-flex justify-content-center px-3 py-2 mb-3" onClick={()=>{handleStatusOrder(order.order_id,'Confirmed')}}
-                //     >
-                //       Confirm
-                //     </button>
-                //     <button
-                //       type="button"
-                //       className="btn btn-danger d-flex justify-content-center px-4 py-2 mb-3" onClick={()=>handleStatusOrder(order.order_id,'Rejected')}
-                //     >
-                //       Reject
-                //     </button>
-                //   </div>
                 <td className={className}>
                 <div className="flex items-center">
                   <Button 
- className="mr-2 flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-blue-500"
- onClick={()=>{handleStatusOrder(order.order_id,'Confirmed')}}>
+                  className="mr-2 flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-blue-500"
+                   onClick={()=>{handleStatusOrder(order.order_id,'Confirmed')}}>
                          <CheckIcon className="h-5 w-5 mr-1" />
                          Confirm
                   </Button>
                   <Button 
-className="text-red-600 flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-red-500"
-onClick={()=>handleStatusOrder(order.order_id,'Rejected')}    >
-                    <TrashIcon className="h-5 w-5 mr-1" /> Reject
+                  className="text-red-600 flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-red-500"
+                  onClick={()=>handleStatusOrder(order.order_id,'Canceled')}    >
+                    <TrashIcon className="h-5 w-5 mr-1" /> Cancel
                   </Button>
                 </div>
               </td>
                 ):  <td></td>}
-
-                   
                   </tr>
                 );
               }
-            )}
+            ):  <tr>
+            <td colSpan={12} className="text-center py-3">
+              No orders found for the selected date.
+            </td>
+          </tr>}
           </tbody>
         </table>
       </CardBody>

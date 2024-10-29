@@ -6,9 +6,13 @@ import {
   RectangleStackIcon,
   ShoppingBagIcon,
   CreditCardIcon,
-  WalletIcon, // Using CreditCardIcon for Coupon Codes
+  WalletIcon,
+  QrCodeIcon,
+  GiftIcon ,
+  ChatBubbleLeftEllipsisIcon ,
+  PhotoIcon 
 } from "@heroicons/react/24/solid"; // Ensure you import the correct icon
-
+import { BiSolidCoupon } from "react-icons/bi";
 import { Home, Products, Notifications } from "@/pages/dashboard";
 
 // import { Home,  Notifications, Products } from "@/pages/dashboard";
@@ -62,7 +66,7 @@ export const routes = [
         element: <Brands />, // Adjust this to the correct element if needed
       },
       {
-        icon: <CreditCardIcon {...icon} />, // Icon for Brands
+        icon: <BiSolidCoupon {...icon} />, // Icon for Brands
         name: "Discount Codes",
         path: "/codes",
         element: <Codes />, // Adjust this to the correct element if needed
@@ -80,43 +84,43 @@ export const routes = [
         element: <Wallet />, // Adjust this to the correct element if needed
       },
       {
-        icon: <CreditCardIcon {...icon} />, // Icon for Brands
+        icon: <GiftIcon {...icon} />, // Icon for Brands
         name: "Wrap Gift",
         path: "/wrapgift",
         element: <WrapGift />, // Adjust this to the correct element if needed
       }, 
       {
-        icon: <CreditCardIcon {...icon} />, // Icon for Brands
+        icon: <ChatBubbleLeftEllipsisIcon  {...icon} />, // Icon for Brands
         name: "FeedBack",
         path: "/feedback",
         element: <Feedback />, // Adjust this to the correct element if needed
       }, 
        {
-        icon: <CreditCardIcon {...icon} />, // Icon for Brands
+        icon: <PhotoIcon  {...icon} />, // Icon for Brands
         name: "Slider",
         path: "/slider",
         element: <Slider />, // Adjust this to the correct element if needed
       },
     ],
   },
-  {
-    title: "Auth Pages",
-    layout: "auth",
-    pages: [
-      {
-        icon: <ServerStackIcon {...icon} />,
-        name: "Sign In",
-        path: "/sign-in",
-        element: <SignIn />,
-      },
-      {
-        icon: <RectangleStackIcon {...icon} />,
-        name: "Sign Up",
-        path: "/sign-up",
-        element: <SignUp />,
-      },
-    ],
-  },
+  // {
+  //   title: "Auth Pages",
+  //   layout: "auth",
+  //   pages: [
+  //     // {
+  //     //   icon: <ServerStackIcon {...icon} />,
+  //     //   name: "Sign In",
+  //     //   path: "/sign-in",
+  //     //   element: <SignIn />,
+  //     // },
+  //     // {
+  //     //   icon: <RectangleStackIcon {...icon} />,
+  //     //   name: "Sign Up",
+  //     //   path: "/sign-up",
+  //     //   element: <SignUp />,
+  //     // },
+  //   ],
+  // },
 ];
 
 export default routes;
