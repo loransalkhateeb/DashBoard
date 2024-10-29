@@ -12,10 +12,7 @@ export function AddFragrance() {
     season: '',
     brandID: '',
     FragranceTypeID: '',
-    size: '',
-    available: '',
-    before_price: '',
-    after_price: '',
+    sizes: [{ Size: '', Available: '', before_price: '', after_price: '' }],
     instock: '',
     img: null,
   });
@@ -59,9 +56,26 @@ export function AddFragrance() {
     setProductData(prevData => ({ ...prevData, img: e.target.files[0] }));
   };
 
+  const handleSizeChange = (index, e) => {
+    const { name, value } = e.target;
+    const updatedSizes = [...productData.sizes];
+    updatedSizes[index] = { ...updatedSizes[index], [name]: value };
+
+    console.log(`Updated Size ${index}:`, updatedSizes[index]); 
+
+    setProductData(prevData => ({ ...prevData, sizes: updatedSizes }));
+  };
+
+  const addSize = () => {
+    setProductData(prevData => ({
+      ...prevData,
+      sizes: [...prevData.sizes, { Size: '', Available: '', before_price: '', after_price: '' }],
+    }));
+  };
+
   const validateData = () => {
     for (const key in productData) {
-      if (!productData[key] && key !== 'img') {
+      if (key !== 'sizes' && !productData[key] && key !== 'img') {
         Swal.fire({
           title: 'Error!',
           text: `${key.replace(/_/g, ' ')} is required.`,
@@ -71,6 +85,17 @@ export function AddFragrance() {
         return false;
       }
     }
+    // for (const size of productData.sizes) {
+    //   if (!size.size || !size.before_price || !size.after_price) {
+    //     // Swal.fire({
+    //     //   title: 'Error!',
+    //     //   text: 'All fields for sizes must be filled.',
+    //     //   icon: 'error',
+    //     //   confirmButtonText: 'Ok',
+    //     // });
+    //     return false;
+    //   }
+    // }
     return true;
   };
 
@@ -79,8 +104,16 @@ export function AddFragrance() {
     if (!validateData()) return;
 
     const formDataToSend = new FormData();
+
     Object.entries(productData).forEach(([key, value]) => {
-      formDataToSend.append(key, key === 'instock' ? (value === 'yes' ? 'yes' : 'no') : value);
+      if (key !== 'sizes') {
+        formDataToSend.append(key, value);
+      }
+    });
+
+    productData.sizes.forEach((size, index) => {
+      console.log(`Size ${index}:`, size); 
+      formDataToSend.append('sizes[]', JSON.stringify(size));
     });
 
     try {
@@ -98,6 +131,7 @@ export function AddFragrance() {
         confirmButtonText: 'Ok',
       });
 
+      
       setProductData({
         name: '',
         description: '',
@@ -107,10 +141,7 @@ export function AddFragrance() {
         season: '',
         brandID: '',
         FragranceTypeID: '',
-        size: '',
-        available: '',
-        before_price: '',
-        after_price: '',
+        sizes: [{ size: '', available: '', before_price: '', after_price: '' }],
         instock: '',
         img: null,
       });
@@ -167,6 +198,19 @@ export function AddFragrance() {
                     <option value="yes">In Stock</option>
                     <option value="no">Out of Stock</option>
                   </select>
+                </div>
+              ) : key === 'sizes' ? (
+                <div key={key}>
+                  <Typography variant="small" className="block mb-1">Sizes</Typography>
+                  {productData.sizes.map((size, index) => (
+                    <div key={index} className="flex flex-col mb-4">
+                      <Input name="Size" value={size.size} placeholder="Size" onChange={(e) => handleSizeChange(index, e)} />
+                      <Input name="Available" value={size.available} placeholder="Available (yes/no)" onChange={(e) => handleSizeChange(index, e)} />
+                      <Input name="before_price" value={size.before_price} placeholder="Before Price" type="number" onChange={(e) => handleSizeChange(index, e)} />
+                      <Input name="after_price" value={size.after_price} placeholder="After Price" type="number" onChange={(e) => handleSizeChange(index, e)} />
+                    </div>
+                  ))}
+                  <Button type="button" onClick={addSize} className="mt-2">Add Size</Button>
                 </div>
               ) : key !== 'img' ? (
                 <div key={key}>
