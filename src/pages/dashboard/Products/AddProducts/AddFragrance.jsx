@@ -7,7 +7,11 @@ export function AddFragrance() {
     name: '',
     description: '',
     sale: '',
+
     main_product_type: 'Fragrance',
+
+    main_product_type: 'Fragrance', // Set default as Fragrance
+
     product_type: '',
     season: '',
     brandID: '',
@@ -82,6 +86,7 @@ export function AddFragrance() {
         return false;
       }
     }
+
     return true;
   };
 
@@ -120,7 +125,7 @@ export function AddFragrance() {
         confirmButtonText: 'Ok',
       });
 
-     
+
       setProductData({
         name: '',
         description: '',
