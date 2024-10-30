@@ -7,15 +7,12 @@ export function AddFragrance() {
     name: '',
     description: '',
     sale: '',
-    main_product_type: '',
+    main_product_type: 'Fragrance', // Set default as Fragrance
     product_type: '',
     season: '',
     brandID: '',
     FragranceTypeID: '',
-    size: '',
-    available: '',
-    before_price: '',
-    after_price: '',
+    Fragrancevariants: [{ size: '', available: '', before_price: '', after_price: '' }],
     instock: '',
     img: null,
   });
@@ -59,9 +56,23 @@ export function AddFragrance() {
     setProductData(prevData => ({ ...prevData, img: e.target.files[0] }));
   };
 
+  const handleVariantChange = (index, e) => {
+    const { name, value } = e.target;
+    const updatedFragrancevariants = [...productData.Fragrancevariants];
+    updatedFragrancevariants[index] = { ...updatedFragrancevariants[index], [name]: value };
+    setProductData(prevData => ({ ...prevData, Fragrancevariants: updatedFragrancevariants }));
+  };
+
+  const addVariant = () => {
+    setProductData(prevData => ({
+      ...prevData,
+      Fragrancevariants: [...prevData.Fragrancevariants, { size: '', available: '', before_price: '', after_price: '' }],
+    }));
+  };
+
   const validateData = () => {
     for (const key in productData) {
-      if (!productData[key] && key !== 'img') {
+      if (key !== 'Fragrancevariants' && key !== 'img' && !productData[key]) {
         Swal.fire({
           title: 'Error!',
           text: `${key.replace(/_/g, ' ')} is required.`,
@@ -71,6 +82,7 @@ export function AddFragrance() {
         return false;
       }
     }
+    // Optionally validate Fragrancevariants if needed
     return true;
   };
 
@@ -79,8 +91,20 @@ export function AddFragrance() {
     if (!validateData()) return;
 
     const formDataToSend = new FormData();
+
+    // Append non-variant fields
     Object.entries(productData).forEach(([key, value]) => {
-      formDataToSend.append(key, key === 'instock' ? (value === 'yes' ? 'yes' : 'no') : value);
+      if (key !== 'Fragrancevariants') {
+        formDataToSend.append(key, value);
+      }
+    });
+
+    // Append Fragrancevariants correctly
+    productData.Fragrancevariants.forEach((variant, index) => {
+      formDataToSend.append(`Fragrancevariants[${index}][size]`, variant.size);
+      formDataToSend.append(`Fragrancevariants[${index}][available]`, variant.available);
+      formDataToSend.append(`Fragrancevariants[${index}][before_price]`, variant.before_price);
+      formDataToSend.append(`Fragrancevariants[${index}][after_price]`, variant.after_price);
     });
 
     try {
@@ -98,19 +122,17 @@ export function AddFragrance() {
         confirmButtonText: 'Ok',
       });
 
+      // Reset form
       setProductData({
         name: '',
         description: '',
         sale: '',
-        main_product_type: '',
+        main_product_type: 'Fragrance',
         product_type: '',
         season: '',
         brandID: '',
         FragranceTypeID: '',
-        size: '',
-        available: '',
-        before_price: '',
-        after_price: '',
+        Fragrancevariants: [{ size: '', available: '', before_price: '', after_price: '' }],
         instock: '',
         img: null,
       });
@@ -168,15 +190,58 @@ export function AddFragrance() {
                     <option value="no">Out of Stock</option>
                   </select>
                 </div>
+              ) : key === 'Fragrancevariants' ? (
+                <div key={key} className="md:col-span-2">
+                  <Typography variant="small" className="block mb-1">Sizes</Typography>
+                  {productData.Fragrancevariants.map((variant, index) => (
+                    <div key={index} className="flex flex-col mb-4 border p-4 rounded-lg">
+                      <Input 
+                        name="size" 
+                        value={variant.size} 
+                        placeholder="Size" 
+                        onChange={(e) => handleVariantChange(index, e)} 
+                        required
+                      />
+                      <Input 
+                        name="available" 
+                        value={variant.available} 
+                        placeholder="Available (Yes/No)" 
+                        onChange={(e) => handleVariantChange(index, e)} 
+                        required
+                      />
+                      <Input 
+                        name="before_price" 
+                        value={variant.before_price} 
+                        placeholder="Before Price" 
+                        type="number" 
+                        onChange={(e) => handleVariantChange(index, e)} 
+                        required
+                      />
+                      <Input 
+                        name="after_price" 
+                        value={variant.after_price} 
+                        placeholder="After Price" 
+                        type="number" 
+                        onChange={(e) => handleVariantChange(index, e)} 
+                        required
+                      />
+                    </div>
+                  ))}
+                  <Button type="button" onClick={addVariant} className="mt-2">
+                    Add Size
+                  </Button>
+                </div>
               ) : key !== 'img' ? (
                 <div key={key}>
-                  <Typography variant="small" className="block mb-1">{key.replace(/_/g, ' ')}</Typography>
-                  <Input name={key} value={value} onChange={handleChange} />
+                  <Typography variant="small" className="block mb-1">
+                    {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  </Typography>
+                  <Input name={key} value={value} onChange={handleChange} required />
                 </div>
               ) : (
-                <div key={key}>
+                <div key={key} className="md:col-span-2">
                   <Typography variant="small" className="block mb-1">Image</Typography>
-                  <Input type="file" name={key} onChange={handleFileChange} />
+                  <Input type="file" name={key} onChange={handleFileChange} accept="image/*" required />
                 </div>
               )
             ))}

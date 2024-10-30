@@ -7,7 +7,7 @@ export function AddBags() {
     name: '',
     description: '',
     sale: '',
-    main_product_type: '',
+    main_product_type: 'Bag', // تعيين القيمة الافتراضية إلى 'Bag'
     product_type: '',
     season: '',
     brandID: '',
@@ -22,9 +22,11 @@ export function AddBags() {
 
   const [brands, setBrands] = useState([]);
   const [bagTypes, setBagTypes] = useState([]);
-
+  const [loading, setLoading] = useState(false); // Loading state
+  const [imagePreview, setImagePreview] = useState(null); // Image preview
 
   const fetchBrands = useCallback(async () => {
+    setLoading(true);
     try {
       const response = await fetch('http://localhost:1010/product/get/brands');
       if (!response.ok) throw new Error('Failed to fetch brands');
@@ -32,11 +34,19 @@ export function AddBags() {
       setBrands(data);
     } catch (error) {
       console.error('Error fetching brands:', error);
+      Swal.fire({
+        title: 'Error!',
+        text: 'Failed to fetch brands. Please try again.',
+        icon: 'error',
+        confirmButtonText: 'Ok',
+      });
+    } finally {
+      setLoading(false);
     }
   }, []);
 
-  
   const fetchBagTypes = useCallback(async () => {
+    setLoading(true);
     try {
       const response = await fetch('http://localhost:1010/bagtypeid/getbagtypeid');
       if (!response.ok) throw new Error('Failed to fetch bag types');
@@ -44,27 +54,38 @@ export function AddBags() {
       setBagTypes(data);
     } catch (error) {
       console.error('Error fetching bag types:', error);
+      Swal.fire({
+        title: 'Error!',
+        text: 'Failed to fetch bag types. Please try again.',
+        icon: 'error',
+        confirmButtonText: 'Ok',
+      });
+    } finally {
+      setLoading(false);
     }
   }, []);
 
-  
   useEffect(() => {
     fetchBrands();
     fetchBagTypes();
   }, [fetchBrands, fetchBagTypes]);
 
- 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProductData(prevData => ({ ...prevData, [name]: value }));
   };
 
-  
   const handleFileChange = (e) => {
-    setProductData(prevData => ({ ...prevData, img: e.target.files[0] }));
+    const file = e.target.files[0];
+    setProductData(prevData => ({ ...prevData, img: file }));
+
+    // Create a URL for the image preview
+    if (file) {
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
+    }
   };
 
-  
   const validateData = () => {
     for (const key in productData) {
       if (!productData[key] && key !== 'img') {
@@ -80,7 +101,6 @@ export function AddBags() {
     return true;
   };
 
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateData()) return;
@@ -90,6 +110,7 @@ export function AddBags() {
       formDataToSend.append(key, key === 'instock' ? (productData[key] === 'yes' ? 'yes' : 'no') : productData[key]);
     }
 
+    setLoading(true); // Set loading to true while submitting
     try {
       const response = await fetch('http://localhost:1010/product/add', {
         method: 'POST',
@@ -109,11 +130,12 @@ export function AddBags() {
         confirmButtonColor: '#007BFF',
       });
 
+      // Reset form
       setProductData({
         name: '',
         description: '',
         sale: '',
-        main_product_type: '',
+        main_product_type: 'Bag', // إعادة تعيين القيمة إلى 'Bag'
         product_type: '',
         season: '',
         brandID: '',
@@ -125,6 +147,7 @@ export function AddBags() {
         after_price: '',
         instock: '',
       });
+      setImagePreview(null); // Reset image preview
     } catch (error) {
       console.error('Error:', error);
       Swal.fire({
@@ -133,6 +156,8 @@ export function AddBags() {
         icon: 'error',
         confirmButtonText: 'Ok',
       });
+    } finally {
+      setLoading(false); // Set loading to false after submission
     }
   };
 
@@ -188,12 +213,17 @@ export function AddBags() {
                 <div key={key} className="flex flex-col">
                   <Typography variant="small" className="block mb-1">Image</Typography>
                   <Input type="file" name={key} onChange={handleFileChange} />
+                  {imagePreview && (
+                    <div className="mt-2">
+                      <img src={imagePreview} alt="Selected Preview" className="h-32 w-32 object-cover" />
+                    </div>
+                  )}
                 </div>
               )
             ))}
           </div>
-          <Button type="submit" className="mt-4" fullWidth>
-            Add Bag
+          <Button type="submit" className="mt-4" fullWidth disabled={loading}>
+            {loading ? 'Adding...' : 'Add Bag'}
           </Button>
         </form>
       </div>
