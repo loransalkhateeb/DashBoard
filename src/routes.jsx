@@ -13,10 +13,14 @@ import {
   PhotoIcon 
 } from "@heroicons/react/24/solid"; // Ensure you import the correct icon
 import { BiSolidCoupon } from "react-icons/bi";
-import { Home, Products, Notifications } from "@/pages/dashboard";
+import {Products, Notifications } from "@/pages/dashboard";
 
+
+
+import { Home, Profile, } from "@/pages/dashboard";
 
 import { Profile} from "@/pages/dashboard";
+
 
 
 

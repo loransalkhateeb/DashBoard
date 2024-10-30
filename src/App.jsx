@@ -20,6 +20,8 @@ import AddWrapGift from "./pages/dashboard/WrapGift/AddWrapGift.jsx";
 import UpdateWrapGift from "./pages/dashboard/WrapGift/UpdateWrapGift.jsx";
 import UpdateProducts from "./pages/dashboard/Products/UpdateProducts";
 import { SignIn } from "./pages/auth";
+import UpdateWatches from "./pages/dashboard/Products/UpdateProducts/UpdateWatches";
+import UpdateFragrances from "./pages/dashboard/Products/UpdateProducts/UpdateFragrances";
 export const API_URL="http://localhost:1010";
 
 function App() {
@@ -40,8 +42,12 @@ function App() {
 
       {/* <Route path="/dashboard/*" element={<Dashboard />}> */}
       <Route path="/dashboard/*" element={
+
+        isAuthenticated ? <Dashboard /> : <Navigate to="/auth/sign-in" replace /> }>    
+
         true ? <Dashboard /> : <Navigate to="/auth/sign-in" replace />
       }>    
+
         <Route path="adduser" element={<AddUser />} />
         <Route path="updateuser/:id" element={<UpdateUser />} />
         <Route path="addbrand" element={<AddBrand />} />
@@ -53,6 +59,13 @@ function App() {
         <Route path="addwrapgift" element={<AddWrapGift />} />
         <Route path="updatewrapgift/:id" element={<UpdateWrapGift />} /> 
         <Route path="updateproduct/:id" element={<UpdateProducts />} /> 
+
+
+        <Route path="updatewatches/:id" element={<UpdateWatches />} /> 
+        <Route path="updatefragrances/:id" element={<UpdateFragrances />} /> 
+        <Route path="updatebags/:id" element={<UpdateBags />} /> 
+
+
       </Route>
       <Route path="/auth/*" element={<Auth />} />
       <Route path="/auth/sign-in" element={<SignIn setIsAuthenticated={setIsAuthenticated} />} />

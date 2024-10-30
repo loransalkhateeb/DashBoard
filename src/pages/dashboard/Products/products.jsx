@@ -118,7 +118,7 @@ export function Products() {
   };
 
   const renderedProducts = useMemo(() => {
-    return products.map(({ id, name, brand_name, sale, instock, after_price, before_price, first_image }, key) => {
+    return products.map(({ id, name, brand_name, sale, instock, after_price, before_price, first_image, main_product_type }, key) => {
       const className = `py-3 px-5 ${key === products.length - 1 ? "" : "border-b border-blue-gray-50"}`;
 
       return (
@@ -149,9 +149,61 @@ export function Products() {
           </td>
           <td className={className}>
             <div className="flex items-center">
-              <Button onClick={() => navigate(`/dashboard/updateproduct/${id}`)} className="mr-2 flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-blue-500">
-                <PencilIcon className="h-5 w-5 mr-1" /> Edit
-              </Button>
+            <Button onClick={() => {
+  const productType = main_product_type;
+  console.log('Product Type:', productType);
+
+  
+  fetch(`http://localhost:1010/product/bymaintype/${productType}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Data from the new URL:', data);
+     
+      if (data.length > 0) { 
+        if (productType === "Watch") {
+          navigate(`/dashboard/UpdateProducts/UpdateWatches/${data[0].id}`);
+        } else if (productType === "Fragrance") {
+          navigate(`/dashboard/UpdateProducts/UpdateFragrance/${data[0].id}`);
+        } else if (productType === "Bags") {
+          navigate(`/dashboard/UpdateProducts/UpdateBags/${data[0].id}`);
+        } else {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Unknown product type.',
+            icon: 'error',
+            background: '#000',
+            color: '#fff',
+          });
+        }
+      } else {
+        Swal.fire({
+          title: 'Error!',
+          text: 'No data found for this product type.',
+          icon: 'error',
+          background: '#000',
+          color: '#fff',
+        });
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching product by main type:', error);
+      Swal.fire({
+        title: 'Error!',
+        text: 'There was an error fetching the product data.',
+        icon: 'error',
+        background: '#000',
+        color: '#fff',
+      });
+    });
+}} className="mr-2 flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-blue-500">
+  <PencilIcon className="h-5 w-5 mr-1" /> Edit
+</Button>
+
               <Button onClick={() => handleDelete(id)} className="text-red-600 flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-red-500">
                 <TrashIcon className="h-5 w-5 mr-1" /> Delete
               </Button>

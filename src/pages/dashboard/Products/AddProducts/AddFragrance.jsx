@@ -7,7 +7,11 @@ export function AddFragrance() {
     name: '',
     description: '',
     sale: '',
+
+    main_product_type: 'Fragrance',
+
     main_product_type: 'Fragrance', // Set default as Fragrance
+
     product_type: '',
     season: '',
     brandID: '',
@@ -82,7 +86,7 @@ export function AddFragrance() {
         return false;
       }
     }
-    // Optionally validate Fragrancevariants if needed
+
     return true;
   };
 
@@ -92,14 +96,13 @@ export function AddFragrance() {
 
     const formDataToSend = new FormData();
 
-    // Append non-variant fields
+
     Object.entries(productData).forEach(([key, value]) => {
       if (key !== 'Fragrancevariants') {
         formDataToSend.append(key, value);
       }
     });
 
-    // Append Fragrancevariants correctly
     productData.Fragrancevariants.forEach((variant, index) => {
       formDataToSend.append(`Fragrancevariants[${index}][size]`, variant.size);
       formDataToSend.append(`Fragrancevariants[${index}][available]`, variant.available);
@@ -122,7 +125,7 @@ export function AddFragrance() {
         confirmButtonText: 'Ok',
       });
 
-      // Reset form
+
       setProductData({
         name: '',
         description: '',

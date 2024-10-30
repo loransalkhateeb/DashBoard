@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Input, Button, Typography } from "@material-tailwind/react";
-import { API_URL } from "../../../App.jsx"; 
 import Swal from "sweetalert2";
 import axios from 'axios';
 
@@ -16,6 +15,14 @@ export function UpdateProduct() {
     main_product_type: '',
     product_type: '',
     season: '',
+
+    brandID: '',
+    before_price: '',
+    after_price: '',
+    instock: '',
+    img: [],
+    bagTypeID: null, 
+
     brandID: '', // Added brandID
     BagTypeID: '', // Changed from null to empty string
     WatchTypeID: null,
@@ -25,6 +32,7 @@ export function UpdateProduct() {
     after_price: '',  // Top-level after_price
     img: [], // For new images to upload
     variants: [{ size: '', before_price: '', after_price: '', Available: false }], // Initialize variants with 'Available'
+
   });
 
   const [existingImages, setExistingImages] = useState([]); // For existing images
@@ -37,6 +45,25 @@ export function UpdateProduct() {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
+
+        const response = await axios.get(`http://localhost:1010/product/${id}`);
+        const product = response.data.product;
+        setProductData({
+          name: product.name,
+          description: product.description,
+          sale: product.sale,
+          main_product_type: product.main_product_type,
+          product_type: product.product_type,
+          season: product.season,
+          brandID: product.brandID,
+          before_price: product.before_price,
+          after_price: product.after_price,
+          instock: product.instock === 'yes' ? 'Yes' : 'No',
+          bagTypeID: product.BagTypeID, 
+        });
+        setExistingImages(response.data.images);
+        console.log("prod",response.data)
+
         const response = await axios.get(`${API_URL}/product/${id}`);
         const { product, images, variants } = response.data;
 
@@ -63,6 +90,7 @@ export function UpdateProduct() {
           })) || [],
         });
         setExistingImages(images || []);
+
       } catch (error) {
         console.error("Error fetching product data:", error);
         Swal.fire({
@@ -76,6 +104,7 @@ export function UpdateProduct() {
 
     fetchProductData();
   }, [id]);
+
 
   // Fetch Watch Types
   useEffect(() => {
@@ -159,9 +188,11 @@ export function UpdateProduct() {
   }, []);
 
   // Handle Change for Non-Variant Fields
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProductData((prevData) => ({ ...prevData, [name]: value }));
+    const finalValue = value === "" ? null : value;
+    setProductData((prevData) => ({ ...prevData, [name]: finalValue }));
   };
 
   // Handle File Change for New Images
@@ -169,6 +200,7 @@ export function UpdateProduct() {
     const files = Array.from(e.target.files);
     setProductData((prevData) => ({ ...prevData, img: files }));
   };
+
 
   // Handle Removing Existing Images
   const handleRemoveImage = (index) => {
@@ -272,7 +304,7 @@ export function UpdateProduct() {
     return true;
   };
 
-  // Handle Form Submission
+
   const handleUpdate = async (e) => {
     e.preventDefault();
 
@@ -316,7 +348,7 @@ export function UpdateProduct() {
     }
 
     try {
-      await axios.put(`${API_URL}/product/update/${id}`, formDataToSend, {
+      await axios.put(`http://localhost:1010/product/update/${id}`, formDataToSend, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -348,6 +380,92 @@ export function UpdateProduct() {
         </div>
         <form onSubmit={handleUpdate} className="mt-8 mb-2 mx-auto w-full max-w-screen-lg">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+
+            <Input
+              name="name"
+              label="Product Name"
+              value={productData.name}
+              onChange={handleChange}
+              required
+            />
+            <Input
+              name="description"
+              label="Description"
+              value={productData.description}
+              onChange={handleChange}
+              required
+            />
+            <Input
+              name="sale"
+              label="Sale"
+              value={productData.sale}
+              onChange={handleChange}
+              required
+            />
+            <Input
+              name="main_product_type"
+              label="Main Product Type"
+              value={productData.main_product_type}
+              onChange={handleChange}
+              required
+            />
+            <Input
+              name="product_type"
+              label="Product Type"
+              value={productData.product_type}
+              onChange={handleChange}
+              required
+            />
+            <Input
+              name="season"
+              label="Season"
+              value={productData.season}
+              onChange={handleChange}
+              required
+            />
+            <Input
+              name="brandID"
+              label="Brand ID"
+              value={productData.brandID}
+              onChange={handleChange}
+              required
+            />
+            <Input
+              name="before_price"
+              label="Before Price"
+              type="number"
+              value={productData.before_price}
+              onChange={handleChange}
+              required
+            />
+            <Input
+              name="after_price"
+              label="After Price"
+              type="number"
+              value={productData.after_price}
+              onChange={handleChange}
+              required
+            />
+            <Input
+              name="instock"
+              label="In Stock"
+              value={productData.instock}
+              onChange={handleChange}
+              required
+            />
+            <Input
+              name="bagTypeID"
+              label="Bag Type ID"
+              value={productData.bagTypeID}
+              onChange={handleChange}
+              required
+            />
+            <Input
+              type="file"
+              onChange={handleFileChange}
+              multiple
+            />
+
 
             {/* Product Name */}
             <div>
@@ -594,6 +712,7 @@ export function UpdateProduct() {
                 />
               </div>
             </div>
+
 
           </div>
           <Button type="submit" className="mt-4" fullWidth>
