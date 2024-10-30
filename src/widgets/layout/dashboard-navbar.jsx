@@ -91,6 +91,14 @@ export function DashboardNavbar() {
           </Typography>
         </div>
         <div className="flex items-center">
+        <IconButton
+            variant="text"
+            color="blue-gray"
+            className="grid xl:hidden"
+            onClick={() => setOpenSidenav(dispatch, !openSidenav)}
+          >
+            <Bars3Icon strokeWidth={3} className="h-6 w-6 text-blue-gray-500" />
+          </IconButton>
             <Button
              onClick={handleLogout}
               variant="text"
@@ -98,8 +106,10 @@ export function DashboardNavbar() {
               className="hidden items-center gap-1 px-4 xl:flex normal-case"
             >
               <UserCircleIcon className="h-5 w-5 text-blue-gray-500" />
-Logout            </Button>
+             Logout           
+            </Button>
             <IconButton
+             onClick={handleLogout}
               variant="text"
               color="blue-gray"
               className="grid xl:hidden"
