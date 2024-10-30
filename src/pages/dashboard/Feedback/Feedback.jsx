@@ -75,7 +75,7 @@ function Feedback() {
         <table className="w-full min-w-[640px] table-auto">
           <thead>
             <tr>
-              {["Full Name","Product","Image","Message","Action"].map((el) => (
+              {["Full Name","Product","Image","Message","rating","Action"].map((el) => (
                 <th
                   key={el}
                   className="border-b border-blue-gray-50 py-3 px-5 text-left"
@@ -140,12 +140,21 @@ function Feedback() {
                           </Typography>
                       </Typography>
                     </td>
+                    <td className={className}>
+                      <Typography className="text-xs font-semibold text-blue-gray-600">
+                      <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-semibold">
+                            {comment.rating}
+                          </Typography>
+                      </Typography>
+                    </td>
                      <td className={className}>
                         <div className="flex items-center">
                           <Button 
                     onClick={() => handleShow(comment.id)} // Pass the comment ID to handleShow
-                    className="text-red-600 flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-red-500"
-                          >
+                    className="text-red-600 flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-red-500">
                             <TrashIcon className="h-5 w-5 mr-1" /> Delete
                           </Button>
                         </div>
