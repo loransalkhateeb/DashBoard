@@ -26,8 +26,12 @@ import UpdateWrapGift from "@/pages/dashboard/WrapGift/UpdateWrapGift";
 
 import { AddWatch } from "@/pages/dashboard/Products/AddProducts/AddWatches";
 import AddFragrance from "@/pages/dashboard/Products/AddProducts/AddFragrance";
-import AddProduct, { AddBags } from "@/pages/dashboard/Products/AddProducts/AddBags";
+import  AddBags  from "@/pages/dashboard/Products/AddProducts/AddBags";
 import UpdateProducts from "@/pages/dashboard/Products/UpdateProducts";
+import UpdateWatches from "@/pages/dashboard/Products/UpdateProducts/UpdateWatches";
+import UpdateFragrances from "@/pages/dashboard/Products/UpdateProducts/UpdateFragrances";
+import UpdateBags from "@/pages/dashboard/Products/UpdateProducts/UpdateBags";
+
 export function Dashboard() {
   const [controller, dispatch] = useMaterialTailwindController();
   const { sidenavType } = controller;
@@ -77,7 +81,13 @@ export function Dashboard() {
             <Route path="updatewrapgift/:id" element={<UpdateWrapGift />} />
             <Route path="updateproduct/:id" element={<UpdateProducts />} /> 
 
-        </Routes>
+            
+            <Route path="updatewatches/:id" element={<UpdateWatches />} /> 
+            <Route path="updatefragrances/:id" element={<UpdateFragrances />} /> 
+            <Route path="updatebags/:id" element={<UpdateBags />} /> 
+
+
+        </Routes>   
         <div className="text-blue-gray-600">
           <Footer />
         </div>

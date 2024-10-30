@@ -1,13 +1,17 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Input, Button, Typography } from "@material-tailwind/react";
 import Swal from 'sweetalert2';
+import { useParams, useNavigate } from 'react-router-dom';
 
-export function AddWatch() {
+export function UpdateWatch() {
+  const { id } = useParams(); 
+  const navigate = useNavigate();
+  
   const [productData, setProductData] = useState({
     name: '',
     description: '',
     sale: '',
-    main_product_type: 'Watch', 
+    main_product_type: '',
     product_type: '',
     season: '',
     brandID: '',
@@ -44,10 +48,22 @@ export function AddWatch() {
     }
   }, []);
 
+  const fetchProductData = useCallback(async () => {
+    try {
+      const response = await fetch(`http://localhost:1010/product/get/${id}`);
+      if (!response.ok) throw new Error('Failed to fetch product data');
+      const data = await response.json();
+      setProductData(data); // ضبط بيانات المنتج في الحالة
+    } catch (error) {
+      console.error('Error fetching product data:', error);
+    }
+  }, [id]);
+
   useEffect(() => {
     fetchBrands();
     fetchWatchTypes();
-  }, [fetchBrands, fetchWatchTypes]);
+    fetchProductData(); // جلب بيانات المنتج عند تحميل المكون
+  }, [fetchBrands, fetchWatchTypes, fetchProductData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -76,16 +92,6 @@ export function AddWatch() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (productData.main_product_type !== 'Watch') {
-      Swal.fire({
-        title: 'Error!',
-        text: 'Product type must be Watch.',
-        icon: 'error',
-        confirmButtonText: 'Ok',
-      });
-      return;
-    }
-
     if (!validateData()) return;
 
     const formDataToSend = new FormData();
@@ -100,8 +106,8 @@ export function AddWatch() {
     }
 
     try {
-      const response = await fetch('http://localhost:1010/product/add', {
-        method: 'POST',
+      const response = await fetch(`http://localhost:1010/product/update/${id}`, { // استخدام id في الرابط
+        method: 'PUT', // استخدام PUT لتحديث البيانات
         body: formDataToSend,
       });
 
@@ -113,33 +119,19 @@ export function AddWatch() {
       const data = await response.json();
       console.log('Success:', data);
       Swal.fire({
-        title: 'Successfully Added!',
-        text: 'The product has been added successfully',
+        title: 'Successfully Updated!',
+        text: 'The product has been updated successfully',
         icon: 'success',
         confirmButtonText: 'Ok',
         confirmButtonColor: '#007BFF',
       });
 
-      setProductData({
-        name: '',
-        description: '',
-        sale: '',
-        main_product_type: 'Watch', 
-        product_type: '',
-        season: '',
-        brandID: '',
-        WatchTypeID: '',
-        available: '',
-        before_price: '',
-        after_price: '',
-        instock: '',
-        img: [],
-      });
+      navigate('/dashboard/products'); // توجيه المستخدم إلى قائمة المنتجات بعد التحديث
     } catch (error) {
       console.error('Error:', error);
       Swal.fire({
         title: 'Error!',
-        text: 'There was a problem adding the product. Please try again.',
+        text: 'There was a problem updating the product. Please try again.',
         icon: 'error',
         confirmButtonText: 'Ok',
       });
@@ -158,8 +150,8 @@ export function AddWatch() {
     <section className="m-8 flex justify-center">
       <div className="w-full lg:w-3/5 mt-16">
         <div className="text-center mb-6">
-          <Typography variant="h2" className="font-bold mb-4">Add Watch</Typography>
-          <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Fill in the details below to add a new product.</Typography>
+          <Typography variant="h2" className="font-bold mb-4">Update Watch</Typography>
+          <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Update the details below to modify the product.</Typography>
         </div>
         <form onSubmit={handleSubmit} className="mt-8 mb-2 mx-auto w-full max-w-screen-lg">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -203,7 +195,7 @@ export function AddWatch() {
             ))}
           </div>
           <Button type="submit" className="mt-4" fullWidth>
-            Add Watch
+            Update Watch
           </Button>
         </form>
       </div>
@@ -211,4 +203,4 @@ export function AddWatch() {
   );
 }
 
-export default AddWatch;
+export default UpdateWatch;
