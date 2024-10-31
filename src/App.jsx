@@ -43,7 +43,12 @@ function App() {
 
       {/* <Route path="/dashboard/*" element={<Dashboard />}> */}
       <Route path="/dashboard/*" element={
+
         isAuthenticated ? <Dashboard /> : <Navigate to="/auth/sign-in" replace /> }>    
+
+        true ? <Dashboard /> : <Navigate to="/auth/sign-in" replace />
+      }>    
+
         <Route path="adduser" element={<AddUser />} />
         <Route path="updateuser/:id" element={<UpdateUser />} />
         <Route path="addbrand" element={<AddBrand />} />

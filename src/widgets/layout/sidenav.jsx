@@ -76,6 +76,8 @@ export function Sidenav({ brandImg, brandName, routes }) {
                       }
                       className="flex items-center gap-4 px-4 capitalize transition-shadow duration-300 ease-in-out hover:shadow-lg hover:shadow-black"
                       fullWidth
+                      onClick={() => setOpenSidenav(dispatch, !openSidenav)}
+ 
                     >
                       {icon}
                       <Typography

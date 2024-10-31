@@ -7,7 +7,11 @@ export function AddFragrance() {
     name: '',
     description: '',
     sale: '',
+
     main_product_type: 'Fragrance',
+
+    main_product_type: 'Fragrance', // Set default as Fragrance
+
     product_type: '',
     season: '',
     brandID: '',
@@ -76,6 +80,7 @@ export function AddFragrance() {
         return false;
       }
     }
+
     return true;
   };
 
@@ -117,7 +122,14 @@ export function AddFragrance() {
         throw new Error(`Network response was not ok: ${errorText}`);
       }
 
-      Swal.fire('Success!', 'The product has been added successfully.', 'success');
+      Swal.fire({
+        title: 'Successfully Added!',
+        text: 'The product has been added successfully',
+        icon: 'success',
+        confirmButtonText: 'Ok',
+      });
+
+     
       setProductData({
         name: '',
         description: '',
