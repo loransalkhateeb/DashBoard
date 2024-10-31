@@ -6,8 +6,7 @@ import axios from 'axios';
 
 export function UpdateProduct() {
   const navigate = useNavigate();
-  const { id } = useParams();
-
+  const { id } = useParams(); 
   const [productData, setProductData] = useState({
     name: '',
     description: '',
@@ -16,21 +15,19 @@ export function UpdateProduct() {
     product_type: '',
     season: '',
     brandID: '',
+    WatchTypeID: null,
+    available: '',
     before_price: '',
     after_price: '',
     instock: '',
-    img: [],
-    bagTypeID: null, 
   });
-
-  const [existingImages, setExistingImages] = useState([]);
-  const [watchTypes, setWatchTypes] = useState([]);
 
   useEffect(() => {
     const fetchProductData = async () => {
       try {
         const response = await axios.get(`http://localhost:1010/product/${id}`);
         const product = response.data.product;
+
         setProductData({
           name: product.name,
           description: product.description,
@@ -39,13 +36,12 @@ export function UpdateProduct() {
           product_type: product.product_type,
           season: product.season,
           brandID: product.brandID,
+          WatchTypeID: product.WatchTypeID,
+          available: product.available,
           before_price: product.before_price,
           after_price: product.after_price,
           instock: product.instock === 'yes' ? 'Yes' : 'No',
-          bagTypeID: product.BagTypeID, 
         });
-        setExistingImages(response.data.images);
-        console.log("prod",response.data)
       } catch (error) {
         console.error("Error fetching product data:", error);
       }
@@ -60,31 +56,11 @@ export function UpdateProduct() {
     setProductData((prevData) => ({ ...prevData, [name]: finalValue }));
   };
 
-  const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
-    setProductData((prevData) => ({ ...prevData, img: files }));
-  };
-
   const handleUpdate = async (e) => {
     e.preventDefault();
 
-    const formDataToSend = new FormData();
-    for (const key in productData) {
-      if (key === 'instock') {
-        formDataToSend.append(key, productData[key] === 'Yes' ? 'yes' : 'no');
-      } else if (key === 'img') {
-        productData.img.forEach((file) => formDataToSend.append('img', file));
-      } else {
-        formDataToSend.append(key, productData[key]);
-      }
-    }
-
     try {
-      await axios.put(`http://localhost:1010/product/update/${id}`, formDataToSend, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await axios.put(`http://localhost:1010/product/update/${id}`, productData);
       Swal.fire({
         title: "Updated!",
         text: "Product information updated successfully!",
@@ -129,6 +105,7 @@ export function UpdateProduct() {
             <Input
               name="sale"
               label="Sale"
+              type="number"
               value={productData.sale}
               onChange={handleChange}
               required
@@ -157,6 +134,7 @@ export function UpdateProduct() {
             <Input
               name="brandID"
               label="Brand ID"
+              type="number"
               value={productData.brandID}
               onChange={handleChange}
               required
@@ -185,25 +163,26 @@ export function UpdateProduct() {
               required
             />
             <Input
-              name="bagTypeID"
-              label="Bag Type ID"
-              value={productData.bagTypeID}
+              name="available"
+              label="Available"
+              value={productData.available}
               onChange={handleChange}
               required
             />
             <Input
-              type="file"
-              onChange={handleFileChange}
-              multiple
+              name="WatchTypeID"
+              label="Watch Type ID"
+              type="number"
+              value={productData.WatchTypeID}
+              onChange={handleChange}
+              required
             />
           </div>
-          <Button type="submit" className="mt-4" fullWidth>
-            Update Product
-          </Button>
+
+          <Button type="submit" className="mt-6">Update Product</Button>
         </form>
       </div>
     </section>
   );
 }
-
-export default UpdateProduct;
+export default UpdateProduct

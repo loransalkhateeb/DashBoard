@@ -22,6 +22,7 @@ import UpdateProducts from "./pages/dashboard/Products/UpdateProducts";
 import { SignIn } from "./pages/auth";
 import UpdateWatches from "./pages/dashboard/Products/UpdateProducts/UpdateWatches";
 import UpdateFragrances from "./pages/dashboard/Products/UpdateProducts/UpdateFragrances";
+import UpdateBags from "./pages/dashboard/Products/UpdateProducts/UpdateBags";
 export const API_URL="http://localhost:1010";
 
 function App() {
@@ -56,9 +57,9 @@ function App() {
         <Route path="updateproduct/:id" element={<UpdateProducts />} /> 
 
 
-        <Route path="updatewatches/:id" element={<UpdateWatches />} /> 
+        {/* <Route path="updatewatches/:id" element={<UpdateWatches />} /> 
         <Route path="updatefragrances/:id" element={<UpdateFragrances />} /> 
-        <Route path="updatebags/:id" element={<UpdateBags />} /> 
+        <Route path="updatebags/:id" element={<UpdateBags />} />  */}
 
 
       </Route>
