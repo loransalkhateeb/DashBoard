@@ -18,10 +18,11 @@ import AddSlide from "./pages/dashboard/Slider/AddSlide.jsx";
 import UpdateSlide from "./pages/dashboard/Slider/UpdateSlide.jsx";
 import AddWrapGift from "./pages/dashboard/WrapGift/AddWrapGift.jsx";
 import UpdateWrapGift from "./pages/dashboard/WrapGift/UpdateWrapGift.jsx";
-import UpdateProducts from "./pages/dashboard/Products/UpdateProducts";
+// import UpdateProducts from "./pages/dashboard/Products/UpdateProducts";
 import { SignIn } from "./pages/auth";
 import UpdateWatches from "./pages/dashboard/Products/UpdateProducts/UpdateWatches";
 import UpdateFragrances from "./pages/dashboard/Products/UpdateProducts/UpdateFragrances";
+import UpdateBags from "./pages/dashboard/Products/UpdateProducts/UpdateBags";
 export const API_URL="http://localhost:1010";
 
 function App() {
@@ -42,12 +43,8 @@ function App() {
 
       {/* <Route path="/dashboard/*" element={<Dashboard />}> */}
       <Route path="/dashboard/*" element={
-
-        isAuthenticated ? <Dashboard /> : <Navigate to="/auth/sign-in" replace /> }>    
-
-        true ? <Dashboard /> : <Navigate to="/auth/sign-in" replace />
-      }>    
-
+        isAuthenticated ? <Dashboard /> : <Navigate to="/auth/sign-in" replace />
+      }> 
         <Route path="adduser" element={<AddUser />} />
         <Route path="updateuser/:id" element={<UpdateUser />} />
         <Route path="addbrand" element={<AddBrand />} />
@@ -58,7 +55,7 @@ function App() {
         <Route path="updateslide/:id" element={<UpdateSlide />} />
         <Route path="addwrapgift" element={<AddWrapGift />} />
         <Route path="updatewrapgift/:id" element={<UpdateWrapGift />} /> 
-        <Route path="updateproduct/:id" element={<UpdateProducts />} /> 
+        {/* <Route path="updateproduct/:id" element={<UpdateProducts />} />  */}
 
 
         <Route path="updatewatches/:id" element={<UpdateWatches />} /> 

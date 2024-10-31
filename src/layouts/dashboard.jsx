@@ -27,7 +27,7 @@ import UpdateWrapGift from "@/pages/dashboard/WrapGift/UpdateWrapGift";
 import { AddWatch } from "@/pages/dashboard/Products/AddProducts/AddWatches";
 import AddFragrance from "@/pages/dashboard/Products/AddProducts/AddFragrance";
 import  AddBags  from "@/pages/dashboard/Products/AddProducts/AddBags";
-import UpdateProducts from "@/pages/dashboard/Products/UpdateProducts";
+// import UpdateProducts from "@/pages/dashboard/Products/UpdateProducts";
 import UpdateWatches from "@/pages/dashboard/Products/UpdateProducts/UpdateWatches";
 import UpdateFragrances from "@/pages/dashboard/Products/UpdateProducts/UpdateFragrances";
 import UpdateBags from "@/pages/dashboard/Products/UpdateProducts/UpdateBags";
@@ -79,7 +79,7 @@ export function Dashboard() {
             <Route path="updateslide/:id" element={<UpdateSlide />} />
             <Route path="addwrapgift" element={<AddWrapGift />} />
             <Route path="updatewrapgift/:id" element={<UpdateWrapGift />} />
-            <Route path="updateproduct/:id" element={<UpdateProducts />} /> 
+            {/* <Route path="updateproduct/:id" element={<UpdateProducts />} />  */}
 
             
             <Route path="updatewatches/:id" element={<UpdateWatches />} /> 
