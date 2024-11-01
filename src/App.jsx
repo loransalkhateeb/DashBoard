@@ -71,7 +71,6 @@ function App() {
       <Route path="/addbags" element={<AddBags/>} />
       <Route path="*" element={<Navigate to="/dashboard/home" replace />} />
 
-
     </Routes>
   );
 }

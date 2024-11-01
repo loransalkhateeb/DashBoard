@@ -117,8 +117,29 @@ export function Products() {
     }
   };
 
+  const handleEdit = (product) => {
+    const { main_product_type, id } = product;
+    
+    if (main_product_type === "Watch") {
+      navigate(`/dashboard/updatewatches/${product.id}`);
+    } else if (main_product_type === "Fragrance") {
+      navigate(`/dashboard/updatefragrance/${id}`);
+    } else if (main_product_type === "Bags") {
+      navigate(`/dashboard/updatebags/${id}`);
+    } else {
+      Swal.fire({
+        title: 'Error!',
+        text: 'Unknown product type.',
+        icon: 'error',
+        background: '#000',
+        color: '#fff',
+      });
+    }
+  };
+
   const renderedProducts = useMemo(() => {
-    return products.map(({ id, name, brand_name, sale, instock, after_price, before_price, first_image, main_product_type }, key) => {
+    return products.map((product, key) => {
+      const { id, name, description, sale, main_product_type, product_type, season, instock, updated_at, after_price, before_price } = product;
       const className = `py-3 px-5 ${key === products.length - 1 ? "" : "border-b border-blue-gray-50"}`;
 
       return (
@@ -130,13 +151,13 @@ export function Products() {
             <Typography variant="small" color="blue-gray" className="font-semibold">{name}</Typography>
           </td>
           <td className={className}>
-            <Typography variant="small" color="blue-gray" className="font-semibold">{brand_name}</Typography>
+            <Typography variant="small" color="blue-gray" className="font-semibold">{description}</Typography>
           </td>
           <td className={className}>
             <Chip variant="gradient" color={sale === "yes" ? "red" : "green"} value={sale === "yes" ? "On Sale" : "Not on Sale"} className="py-0.5 px-2 text-[11px] font-medium w-fit" />
           </td>
           <td className={className}>
-            <Typography variant="small" color="blue-gray" className="font-semibold">{instock !== null ? "In Stock" : "Out of Stock"}</Typography>
+            <Typography variant="small" color="blue-gray" className="font-semibold">{instock === "yes" ? "In Stock" : "Out of Stock"}</Typography>
           </td>
           <td className={className}>
             <Typography variant="small" color="blue-gray" className="font-semibold">{after_price !== null ? `$${after_price}` : "N/A"}</Typography>
@@ -145,64 +166,22 @@ export function Products() {
             <Typography variant="small" color="blue-gray" className="font-semibold">{before_price !== null ? `$${before_price}` : "N/A"}</Typography>
           </td>
           <td className={className}>
-            {first_image && <img src={`http://localhost:1010/${first_image}`} alt={name} className="w-16 h-16 object-cover rounded" />}
+            <Typography variant="small" color="blue-gray" className="font-semibold">{main_product_type}</Typography>
+          </td>
+          <td className={className}>
+            <Typography variant="small" color="blue-gray" className="font-semibold">{product_type}</Typography>
+          </td>
+          <td className={className}>
+            <Typography variant="small" color="blue-gray" className="font-semibold">{season}</Typography>
+          </td>
+          <td className={className}>
+            <Typography variant="small" color="blue-gray" className="font-semibold">{updated_at}</Typography>
           </td>
           <td className={className}>
             <div className="flex items-center">
-            <Button onClick={() => {
-  const productType = main_product_type;
-  console.log('Product Type:', productType);
-
-  
-  fetch(`http://localhost:1010/product/bymaintype/${productType}`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log('Data from the new URL:', data);
-     
-      if (data.length > 0) { 
-        if (productType === "Watch") {
-          navigate(`/dashboard/UpdateProducts/UpdateWatches/${data[0].id}`);
-        } else if (productType === "Fragrance") {
-          navigate(`/dashboard/UpdateProducts/UpdateFragrance/${data[0].id}`);
-        } else if (productType === "Bags") {
-          navigate(`/dashboard/UpdateProducts/UpdateBags/${data[0].id}`);
-        } else {
-          Swal.fire({
-            title: 'Error!',
-            text: 'Unknown product type.',
-            icon: 'error',
-            background: '#000',
-            color: '#fff',
-          });
-        }
-      } else {
-        Swal.fire({
-          title: 'Error!',
-          text: 'No data found for this product type.',
-          icon: 'error',
-          background: '#000',
-          color: '#fff',
-        });
-      }
-    })
-    .catch(error => {
-      console.error('Error fetching product by main type:', error);
-      Swal.fire({
-        title: 'Error!',
-        text: 'There was an error fetching the product data.',
-        icon: 'error',
-        background: '#000',
-        color: '#fff',
-      });
-    });
-}} className="mr-2 flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-blue-500">
-  <PencilIcon className="h-5 w-5 mr-1" /> Edit
-</Button>
+              <Button onClick={() => handleEdit(product)} className="mr-2 flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-blue-500">
+                <PencilIcon className="h-5 w-5 mr-1" /> Edit
+              </Button>
 
               <Button onClick={() => handleDelete(id)} className="text-red-600 flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-red-500">
                 <TrashIcon className="h-5 w-5 mr-1" /> Delete
@@ -235,7 +214,7 @@ export function Products() {
           <table className="w-full min-w-[640px] table-auto">
             <thead>
               <tr>
-                {["ID", "Name", "Brand", "Sale", "In Stock", "After Price", "Before Price", "Image"].map((el) => (
+                {["ID", "Name", "Description", "Sale", "In Stock", "After Price", "Before Price", "Main Product Type", "Product Type", "Season", "Updated At"].map((el) => (
                   <th key={el} className="border-b border-blue-gray-50 py-3 px-5 text-left">
                     <Typography variant="small" className="text-[11px] font-bold uppercase text-blue-gray-400">
                       {el}
@@ -252,7 +231,7 @@ export function Products() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={9} className="text-center py-3">
+                  <td colSpan={12} className="text-center py-3">
                     <Typography className="text-gray-500">Loading...</Typography>
                   </td>
                 </tr>

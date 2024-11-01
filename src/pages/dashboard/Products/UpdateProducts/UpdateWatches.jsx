@@ -11,7 +11,7 @@ export function UpdateWatch() {
     name: '',
     description: '',
     sale: '',
-    main_product_type: '',
+    main_product_type: 'Watch', 
     product_type: '',
     season: '',
     brandID: '',
@@ -25,6 +25,7 @@ export function UpdateWatch() {
 
   const [brands, setBrands] = useState([]);
   const [watchTypes, setWatchTypes] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchBrands = useCallback(async () => {
     try {
@@ -34,6 +35,7 @@ export function UpdateWatch() {
       setBrands(data);
     } catch (error) {
       console.error('Error fetching brands:', error);
+      Swal.fire('Error!', 'Could not load brands.', 'error');
     }
   }, []);
 
@@ -45,6 +47,7 @@ export function UpdateWatch() {
       setWatchTypes(data);
     } catch (error) {
       console.error('Error fetching watch types:', error);
+      Swal.fire('Error!', 'Could not load watch types.', 'error');
     }
   }, []);
 
@@ -53,16 +56,19 @@ export function UpdateWatch() {
       const response = await fetch(`http://localhost:1010/product/get/${id}`);
       if (!response.ok) throw new Error('Failed to fetch product data');
       const data = await response.json();
-      setProductData(data); // ضبط بيانات المنتج في الحالة
+      setProductData(data);
     } catch (error) {
       console.error('Error fetching product data:', error);
+      Swal.fire('Error!', 'Could not load product data.', 'error');
+    } finally {
+      setLoading(false);
     }
   }, [id]);
 
   useEffect(() => {
     fetchBrands();
     fetchWatchTypes();
-    fetchProductData(); // جلب بيانات المنتج عند تحميل المكون
+    fetchProductData();
   }, [fetchBrands, fetchWatchTypes, fetchProductData]);
 
   const handleChange = (e) => {
@@ -106,8 +112,8 @@ export function UpdateWatch() {
     }
 
     try {
-      const response = await fetch(`http://localhost:1010/product/update/${id}`, { // استخدام id في الرابط
-        method: 'PUT', // استخدام PUT لتحديث البيانات
+      const response = await fetch(`http://localhost:1010/product/update/${id}`, {
+        method: 'PUT',
         body: formDataToSend,
       });
 
@@ -123,10 +129,9 @@ export function UpdateWatch() {
         text: 'The product has been updated successfully',
         icon: 'success',
         confirmButtonText: 'Ok',
-        confirmButtonColor: '#007BFF',
       });
 
-      navigate('/dashboard/products'); // توجيه المستخدم إلى قائمة المنتجات بعد التحديث
+      navigate('/dashboard/products');
     } catch (error) {
       console.error('Error:', error);
       Swal.fire({
@@ -145,6 +150,10 @@ export function UpdateWatch() {
   const watchTypeOptions = useMemo(() => watchTypes.map(type => (
     <option key={type.WatchTypeID} value={type.WatchTypeID}>{type.TypeName}</option>
   )), [watchTypes]);
+
+  if (loading) {
+    return <Typography>Loading...</Typography>;
+  }
 
   return (
     <section className="m-8 flex justify-center">
