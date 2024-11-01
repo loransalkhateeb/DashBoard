@@ -7,11 +7,11 @@ export function AddWatch() {
     name: '',
     description: '',
     sale: '',
-    main_product_type: 'Watch', 
+    main_product_type: 'Watch',
     product_type: '',
     season: '',
     brandID: '',
-    WatchTypeID: '',
+    WatchTypeId: '',
     available: '',
     before_price: '',
     after_price: '',
@@ -71,20 +71,23 @@ export function AddWatch() {
         return false;
       }
     }
+
+    
+    if (!productData.WatchTypeId) {
+      Swal.fire({
+        title: 'Error!',
+        text: 'Watch Type is required.',
+        icon: 'error',
+        confirmButtonText: 'Ok',
+      });
+      return false;
+    }
+
     return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (productData.main_product_type !== 'Watch') {
-      Swal.fire({
-        title: 'Error!',
-        text: 'Product type must be Watch.',
-        icon: 'error',
-        confirmButtonText: 'Ok',
-      });
-      return;
-    }
 
     if (!validateData()) return;
 
@@ -112,24 +115,22 @@ export function AddWatch() {
       }
 
       const data = await response.json();
-      console.log('Success:', data);
       Swal.fire({
         title: 'Successfully Added!',
         text: 'The product has been added successfully',
         icon: 'success',
         confirmButtonText: 'Ok',
-        confirmButtonColor: '#007BFF',
       });
 
       setProductData({
         name: '',
         description: '',
         sale: '',
-        main_product_type: 'Watch', 
+        main_product_type: 'Watch',
         product_type: '',
         season: '',
         brandID: '',
-        WatchTypeID: '',
+        WatchTypeId: '', 
         available: '',
         before_price: '',
         after_price: '',
@@ -137,7 +138,6 @@ export function AddWatch() {
         img: [],
       });
     } catch (error) {
-      console.error('Error:', error);
       Swal.fire({
         title: 'Error!',
         text: 'There was a problem adding the product. Please try again.',
@@ -173,7 +173,7 @@ export function AddWatch() {
                     {brandOptions}
                   </select>
                 </div>
-              ) : key === 'WatchTypeID' ? (
+              ) : key === 'WatchTypeId' ? (
                 <div key={key}>
                   <Typography variant="small" className="block mb-1">Watch Type</Typography>
                   <select name={key} value={value} onChange={handleChange} className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">

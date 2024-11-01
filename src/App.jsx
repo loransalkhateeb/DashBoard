@@ -58,9 +58,9 @@ function App() {
         {/* <Route path="updateproduct/:id" element={<UpdateProducts />} />  */}
 
 
-        <Route path="updatewatches/:id" element={<UpdateWatches />} /> 
+        {/* <Route path="updatewatches/:id" element={<UpdateWatches />} /> 
         <Route path="updatefragrances/:id" element={<UpdateFragrances />} /> 
-        <Route path="updatebags/:id" element={<UpdateBags />} /> 
+        <Route path="updatebags/:id" element={<UpdateBags />} />  */}
 
 
       </Route>

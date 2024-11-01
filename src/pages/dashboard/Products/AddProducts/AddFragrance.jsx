@@ -14,15 +14,18 @@ export function AddFragrance() {
     season: '',
     brandID: '',
     FragranceTypeID: '',
-    FragranceVariants: [{ size: '', available: '', before_price: '', after_price: '' }],
+    Fragrancevariants: [{ size: '', available: '', before_price: '', after_price: '' }],
     instock: '',
-    img: null,
+    images: [],
+    fragranceVariants: [{ size: '', available: '', before_price: '', after_price: '' }],
   });
 
   const [brands, setBrands] = useState([]);
-  const [fragranceTypes, setFragranceTypes] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const fetchBrands = useCallback(async () => {
+    setLoading(true);
     try {
       const response = await fetch('http://localhost:1010/product/get/brands');
       if (!response.ok) throw new Error('Failed to fetch brands');
@@ -30,24 +33,15 @@ export function AddFragrance() {
       setBrands(data);
     } catch (error) {
       console.error('Error fetching brands:', error);
-    }
-  }, []);
-
-  const fetchFragranceTypes = useCallback(async () => {
-    try {
-      const response = await fetch('http://localhost:1010/fragrancetypeid/getfragrancetypeid');
-      if (!response.ok) throw new Error('Failed to fetch fragrance types');
-      const data = await response.json();
-      setFragranceTypes(data);
-    } catch (error) {
-      console.error('Error fetching fragrance types:', error);
+      Swal.fire('Error!', 'Failed to fetch brands. Please try again.', 'error');
+    } finally {
+      setLoading(false);
     }
   }, []);
 
   useEffect(() => {
     fetchBrands();
-    fetchFragranceTypes();
-  }, [fetchBrands, fetchFragranceTypes]);
+  }, [fetchBrands]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,26 +49,32 @@ export function AddFragrance() {
   };
 
   const handleFileChange = (e) => {
-    setProductData(prevData => ({ ...prevData, img: e.target.files[0] }));
+    const files = Array.from(e.target.files);
+    setProductData(prevData => ({ ...prevData, images: files }));
+
+    if (files.length > 0) {
+      const previewUrl = URL.createObjectURL(files[0]);
+      setImagePreview(previewUrl);
+    }
   };
 
   const handleVariantChange = (index, e) => {
     const { name, value } = e.target;
-    const updatedFragranceVariants = [...productData.FragranceVariants];
-    updatedFragranceVariants[index] = { ...updatedFragranceVariants[index], [name]: value };
-    setProductData(prevData => ({ ...prevData, FragranceVariants: updatedFragranceVariants }));
+    const updatedFragrancevariants = [...productData.Fragrancevariants];
+    updatedFragrancevariants[index] = { ...updatedFragrancevariants[index], [name]: value };
+    setProductData(prevData => ({ ...prevData, Fragrancevariants: updatedFragrancevariants }));
   };
 
   const addVariant = () => {
     setProductData(prevData => ({
       ...prevData,
-      FragranceVariants: [...prevData.FragranceVariants, { size: '', available: '', before_price: '', after_price: '' }],
+      Fragrancevariants: [...prevData.Fragrancevariants, { size: '', available: '', before_price: '', after_price: '' }],
     }));
   };
 
   const validateData = () => {
     for (const key in productData) {
-      if (key !== 'FragranceVariants' && key !== 'img' && !productData[key]) {
+      if (key !== 'Fragrancevariants' && key !== 'img' && !productData[key]) {
         Swal.fire({
           title: 'Error!',
           text: `${key.replace(/_/g, ' ')} is required.`,
@@ -96,25 +96,32 @@ export function AddFragrance() {
 
 
     Object.entries(productData).forEach(([key, value]) => {
-      if (key !== 'FragranceVariants') {
+      if (key !== 'Fragrancevariants') {
         formDataToSend.append(key, value);
       }
     });
 
-    productData.FragranceVariants.forEach((variant, index) => {
-      formDataToSend.append(`FragranceVariants[${index}][size]`, variant.size);
-      formDataToSend.append(`FragranceVariants[${index}][available]`, variant.available);
-      formDataToSend.append(`FragranceVariants[${index}][before_price]`, variant.before_price);
-      formDataToSend.append(`FragranceVariants[${index}][after_price]`, variant.after_price);
+    productData.Fragrancevariants.forEach((variant, index) => {
+      formDataToSend.append(`Fragrancevariants[${index}][size]`, variant.size);
+      formDataToSend.append(`Fragrancevariants[${index}][available]`, variant.available);
+      formDataToSend.append(`Fragrancevariants[${index}][before_price]`, variant.before_price);
+      formDataToSend.append(`Fragrancevariants[${index}][after_price]`, variant.after_price);
     });
 
+    setLoading(true);
     try {
       const response = await fetch('http://localhost:1010/product/add', {
         method: 'POST',
-        body: formDataToSend,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formDataToSend),
       });
 
-      if (!response.ok) throw new Error(`Network response was not ok: ${await response.text()}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Network response was not ok: ${errorText}`);
+      }
 
       Swal.fire({
         title: 'Successfully Added!',
@@ -123,7 +130,7 @@ export function AddFragrance() {
         confirmButtonText: 'Ok',
       });
 
-
+     
       setProductData({
         name: '',
         description: '',
@@ -133,35 +140,34 @@ export function AddFragrance() {
         season: '',
         brandID: '',
         FragranceTypeID: '',
-        FragranceVariants: [{ size: '', available: '', before_price: '', after_price: '' }],
+        Fragrancevariants: [{ size: '', available: '', before_price: '', after_price: '' }],
         instock: '',
-        img: null,
+        images: [],
+        fragranceVariants: [{ size: '', available: '', before_price: '', after_price: '' }],
       });
+      setImagePreview(null);
     } catch (error) {
       console.error('Error:', error);
-      Swal.fire({
-        title: 'Error!',
-        text: 'There was a problem adding the product. Please try again.',
-        icon: 'error',
-        confirmButtonText: 'Ok',
-      });
+      Swal.fire('Error!', 'There was a problem adding the product. Please try again.', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const brandOptions = useMemo(() => brands.map(brand => (
-    <option key={brand.id} value={brand.id}>{brand.brand_name}</option>
-  )), [brands]);
-
-  const fragranceTypeOptions = useMemo(() => fragranceTypes.map(type => (
-    <option key={type.FragranceTypeID} value={type.FragranceTypeID}>{type.TypeName}</option>
-  )), [fragranceTypes]);
+  const brandOptions = useMemo(() =>
+    brands.map(brand => (
+      <option key={brand.id} value={brand.id}>{brand.brand_name}</option>
+    )), [brands]
+  );
 
   return (
     <section className="m-8 flex justify-center">
       <div className="w-full lg:w-3/5 mt-16">
         <div className="text-center">
           <Typography variant="h2" className="font-bold mb-4">Add Fragrance</Typography>
-          <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Fill in the details below to add a new product.</Typography>
+          <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">
+            Fill in the details below to add a new product.
+          </Typography>
         </div>
         <form onSubmit={handleSubmit} className="mt-8 mb-2 mx-auto w-full max-w-screen-lg">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -191,10 +197,10 @@ export function AddFragrance() {
                     <option value="no">Out of Stock</option>
                   </select>
                 </div>
-              ) : key === 'FragranceVariants' ? (
+              ) : key === 'Fragrancevariants' ? (
                 <div key={key} className="md:col-span-2">
                   <Typography variant="small" className="block mb-1">Sizes</Typography>
-                  {productData.FragranceVariants.map((variant, index) => (
+                  {productData.Fragrancevariants.map((variant, index) => (
                     <div key={index} className="flex flex-col mb-4 border p-4 rounded-lg">
                       <Input 
                         name="size" 
@@ -247,9 +253,7 @@ export function AddFragrance() {
               )
             ))}
           </div>
-          <Button type="submit" className="mt-4" fullWidth>
-            Add Fragrance
-          </Button>
+          <Button type="submit" disabled={loading} className="w-full mt-4">Add Fragrance</Button>
         </form>
       </div>
     </section>
