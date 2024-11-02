@@ -16,7 +16,7 @@ export function AddFragrance() {
     season: '',
     brandID: '',
     FragranceTypeID: '',
-    Fragrancevariants: [{ size: '', available: '', before_price: '', after_price: '' }],
+    FragranceVariants: [{ size: '', available: '', before_price: '', after_price: '' }],
     instock: '',
     img: null,
   });
@@ -62,21 +62,21 @@ export function AddFragrance() {
 
   const handleVariantChange = (index, e) => {
     const { name, value } = e.target;
-    const updatedFragrancevariants = [...productData.Fragrancevariants];
-    updatedFragrancevariants[index] = { ...updatedFragrancevariants[index], [name]: value };
-    setProductData(prevData => ({ ...prevData, Fragrancevariants: updatedFragrancevariants }));
+    const updatedVariants = [...productData.fragranceVariants];
+    updatedVariants[index] = { ...updatedVariants[index], [name]: value };
+    setProductData(prevData => ({ ...prevData, fragranceVariants: updatedVariants }));
   };
 
   const addVariant = () => {
     setProductData(prevData => ({
       ...prevData,
-      Fragrancevariants: [...prevData.Fragrancevariants, { size: '', available: '', before_price: '', after_price: '' }],
+      FragranceVariants: [...prevData.FragranceVariants, { size: '', available: '', before_price: '', after_price: '' }],
     }));
   };
 
   const validateData = () => {
     for (const key in productData) {
-      if (key !== 'Fragrancevariants' && key !== 'img' && !productData[key]) {
+      if (key !== 'FragranceVariants' && key !== 'img' && !productData[key]) {
         Swal.fire({
           title: 'Error!',
           text: `${key.replace(/_/g, ' ')} is required.`,
@@ -86,7 +86,6 @@ export function AddFragrance() {
         return false;
       }
     }
-
     return true;
   };
 
@@ -96,18 +95,17 @@ export function AddFragrance() {
 
     const formDataToSend = new FormData();
 
-
     Object.entries(productData).forEach(([key, value]) => {
-      if (key !== 'Fragrancevariants') {
+      if (key !== 'FragranceVariants') {
         formDataToSend.append(key, value);
       }
     });
 
-    productData.Fragrancevariants.forEach((variant, index) => {
-      formDataToSend.append(`Fragrancevariants[${index}][size]`, variant.size);
-      formDataToSend.append(`Fragrancevariants[${index}][available]`, variant.available);
-      formDataToSend.append(`Fragrancevariants[${index}][before_price]`, variant.before_price);
-      formDataToSend.append(`Fragrancevariants[${index}][after_price]`, variant.after_price);
+    productData.FragranceVariants.forEach((variant, index) => {
+      formDataToSend.append(`FragranceVariants[${index}][size]`, variant.size);
+      formDataToSend.append(`FragranceVariants[${index}][available]`, variant.available);
+      formDataToSend.append(`FragranceVariants[${index}][before_price]`, variant.before_price);
+      formDataToSend.append(`FragranceVariants[${index}][after_price]`, variant.after_price);
     });
 
     try {
@@ -125,7 +123,6 @@ export function AddFragrance() {
         confirmButtonText: 'Ok',
       });
 
-
       setProductData({
         name: '',
         description: '',
@@ -135,7 +132,7 @@ export function AddFragrance() {
         season: '',
         brandID: '',
         FragranceTypeID: '',
-        Fragrancevariants: [{ size: '', available: '', before_price: '', after_price: '' }],
+        FragranceVariants: [{ size: '', available: '', before_price: '', after_price: '' }],
         instock: '',
         img: null,
       });
@@ -161,7 +158,7 @@ export function AddFragrance() {
   return (
     <section className="m-8 flex justify-center">
       <div className="w-full lg:w-3/5 mt-16">
-        <div className="text-center">
+        <div className="text-center mb-6">
           <Typography variant="h2" className="font-bold mb-4">Add Fragrance</Typography>
           <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Fill in the details below to add a new product.</Typography>
         </div>
@@ -193,10 +190,10 @@ export function AddFragrance() {
                     <option value="no">Out of Stock</option>
                   </select>
                 </div>
-              ) : key === 'Fragrancevariants' ? (
+              ) : key === 'FragranceVariants' ? (
                 <div key={key} className="md:col-span-2">
                   <Typography variant="small" className="block mb-1">Sizes</Typography>
-                  {productData.Fragrancevariants.map((variant, index) => (
+                  {productData.FragranceVariants.map((variant, index) => (
                     <div key={index} className="flex flex-col mb-4 border p-4 rounded-lg">
                       <Input 
                         name="size" 
