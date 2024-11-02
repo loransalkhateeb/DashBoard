@@ -20,18 +20,11 @@ export function Products() {
     const fetchProducts = async () => {
       try {
         const response = await fetch("http://localhost:1010/product/get/allproducts");
-        if (!response.ok) throw new Error('Failed to fetch products');
         const data = await response.json();
         setProducts(data); 
+        console.log(data)
       } catch (error) {
         console.error("Error fetching products:", error);
-        Swal.fire({
-          title: 'Error!',
-          text: 'There was an issue fetching the products. Please try again later.',
-          icon: 'error',
-          background: '#000',
-          color: '#fff',
-        });
       } finally {
         setLoading(false); 
       }
@@ -42,18 +35,18 @@ export function Products() {
 
   const handleAddProduct = async () => {
     await Swal.fire({
-      title: '<span style="color: black;">Choose the type of product:</span>', 
+      title: '<span style="color: black;">Choose the type of the product:</span>', 
       showCloseButton: true,
       background: '#fff',  
       html: `
         <div class="flex justify-around" style="width: 100%; padding: 20px 0;">
-          <button id="addWatches" class="bg-black text-white py-2 rounded inline-flex items-center hover:shadow-lg transition duration-300" style="margin: 0 15px; min-width: 150px;">
+          <button id="addWatches" class="bg-black text-white py-2 rounded inline-flex items-center hover:shadow-lg hover:shadow-red-500 transition duration-300" style="margin: 0 15px; min-width: 150px; padding-left: 20px;">
             Add Watches
           </button>
-          <button id="addFragrance" class="bg-black text-white py-2 rounded inline-flex items-center hover:shadow-lg transition duration-300" style="margin: 0 15px; min-width: 150px;">
+          <button id="addFragrance" class="bg-black text-white py-2 rounded inline-flex items-center hover:shadow-lg hover:shadow-red-500 transition duration-300" style="margin: 0 15px; min-width: 150px; padding-left: 20px;">
             Add Fragrance
           </button>
-          <button id="addBag" class="bg-black text-white py-2 rounded inline-flex items-center hover:shadow-lg transition duration-300" style="margin: 0 15px; min-width: 150px;">
+          <button id="addBag" class="bg-black text-white py-2 rounded inline-flex items-center hover:shadow-lg hover:shadow-red-500 transition duration-300" style="margin: 0 15px; min-width: 150px; padding-left: 20px;">
             Add Bag
           </button>
         </div>
@@ -85,9 +78,9 @@ export function Products() {
 
   const handleDelete = async (id) => {
     const result = await Swal.fire({
-      title: 'Are you sure to delete this product?',
+      title: 'Are you sure you want to delete this product?',
       showCancelButton: true,
-      confirmButtonText: 'Okay',
+      confirmButtonText: 'Yes, delete it!',
       cancelButtonText: 'Cancel',
       icon: 'warning',
       background: '#000', 
@@ -100,8 +93,7 @@ export function Products() {
 
     if (result.isConfirmed) {
       try {
-        const response = await fetch(`http://localhost:1010/product/delete/${id}`, { method: 'DELETE' });
-        if (!response.ok) throw new Error('Failed to delete product');
+        await fetch(`http://localhost:1010/product/delete/${id}`, { method: 'DELETE' });
         setProducts(products.filter(product => product.id !== id));
         await Swal.fire({
           title: 'Deleted!',
@@ -117,7 +109,7 @@ export function Products() {
         console.error("Error deleting product:", error);
         Swal.fire({
           title: 'Error!',
-          text: 'There was an error deleting the product. Please try again.',
+          text: 'There was an error deleting the product.',
           icon: 'error',
           background: '#000',
           color: '#fff', 
@@ -128,25 +120,25 @@ export function Products() {
 
   const handleEdit = (product) => {
     const { main_product_type, id } = product;
-    
-    const routes = {
-      Watch: `/dashboard/updatewatches/${id}`,
-      Fragrance: `/dashboard/updatefragrance/${id}`,
-      Bags: `/dashboard/updatebags/${id}`
-    };
 
-    const navigateTo = routes[main_product_type];
-    
-    if (navigateTo) {
-      navigate(navigateTo);
-    } else {
-      Swal.fire({
-        title: 'Error!',
-        text: 'Unknown product type.',
-        icon: 'error',
-        background: '#000',
-        color: '#fff',
-      });
+    switch (main_product_type) {
+      case "Watch":
+        navigate(`/dashboard/updatewatches/${id}`);
+        break;
+      case "Fragrance":
+        navigate(`/dashboard/updatefragrances/${id}`);
+        break;
+      case "Bag":
+        navigate(`/dashboard/updatebags/${id}`);
+        break;
+      default:
+        Swal.fire({
+          title: 'Error!',
+          text: 'Unknown product type.',
+          icon: 'error',
+          background: '#000',
+          color: '#fff',
+        });
     }
   };
 
@@ -195,6 +187,7 @@ export function Products() {
               <Button onClick={() => handleEdit(product)} className="mr-2 flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-blue-500">
                 <PencilIcon className="h-5 w-5 mr-1" /> Edit
               </Button>
+
               <Button onClick={() => handleDelete(id)} className="text-red-600 flex items-center transition duration-300 ease-in hover:shadow-lg hover:shadow-red-500">
                 <TrashIcon className="h-5 w-5 mr-1" /> Delete
               </Button>

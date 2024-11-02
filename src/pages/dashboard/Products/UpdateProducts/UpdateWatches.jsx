@@ -16,6 +16,7 @@ export function UpdateWatch() {
     season: '',
     brandID: '',
     WatchTypeID: '',
+    BagVariants: [],
     available: '',
     before_price: '',
     after_price: '',
@@ -53,10 +54,24 @@ export function UpdateWatch() {
 
   const fetchProductData = useCallback(async () => {
     try {
-      const response = await fetch(`http://localhost:1010/product/get/${id}`);
+      const response = await fetch(`http://localhost:1010/product/${id}`);
       if (!response.ok) throw new Error('Failed to fetch product data');
       const data = await response.json();
-      setProductData(data);
+      setProductData({
+        name: data.name || '',
+        description: data.description || '',
+        sale: data.sale || '',
+        main_product_type: 'Watch',
+        product_type: data.product_type || '',
+        season: data.season || '',
+        brandID: data.brandID || '',
+        WatchTypeID: data.WatchTypeID || '',
+        available: data.available || '',
+        before_price: data.before_price || '',
+        after_price: data.after_price || '',
+        instock: data.instock === 'yes' ? 'Yes' : 'No',
+        img: [],
+      });
     } catch (error) {
       console.error('Error fetching product data:', error);
       Swal.fire('Error!', 'Could not load product data.', 'error');
@@ -83,7 +98,7 @@ export function UpdateWatch() {
 
   const validateData = () => {
     for (const key in productData) {
-      if (!productData[key] && key !== 'img') {
+      if (!productData[key] && key !== 'img' && key !== 'BagVariants') {
         Swal.fire({
           title: 'Error!',
           text: `${key.replace(/_/g, ' ')} is required.`,

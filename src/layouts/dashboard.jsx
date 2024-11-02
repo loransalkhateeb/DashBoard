@@ -9,7 +9,6 @@ import {
 } from "@/widgets/layout";
 import routes from "@/routes";
 
-
 import { useMaterialTailwindController, setOpenConfigurator } from "@/context";
 import AddUser from "@/pages/dashboard/Users/AddUser";
 import UpdateUser from "@/pages/dashboard/Users/UpdateUser";
@@ -22,13 +21,13 @@ import UpdateSlide from "@/pages/dashboard/Slider/UpdateSlide";
 import AddWrapGift from "@/pages/dashboard/WrapGift/AddWrapGift";
 import UpdateWrapGift from "@/pages/dashboard/WrapGift/UpdateWrapGift";
 
-
-
 import { AddWatch } from "@/pages/dashboard/Products/AddProducts/AddWatches";
 import AddFragrance from "@/pages/dashboard/Products/AddProducts/AddFragrance";
-import  AddBags  from "@/pages/dashboard/Products/AddProducts/AddBags";
+import AddBags from "@/pages/dashboard/Products/AddProducts/AddBags";
 import UpdateProducts from "@/pages/dashboard/Products/UpdateProducts";
-
+import UpdateWatch from "@/pages/dashboard/Products/UpdateProducts/UpdateWatches";
+import  UpdateFragrance  from "@/pages/dashboard/Products/UpdateProducts/UpdateFragrances";
+import UpdateBags from "@/pages/dashboard/Products/UpdateProducts/UpdateBags";
 
 export function Dashboard() {
   const [controller, dispatch] = useMaterialTailwindController();
@@ -55,37 +54,31 @@ export function Dashboard() {
           <Cog6ToothIcon className="h-5 w-5" />
         </IconButton>
         <Routes>
-          {routes.map(
-            ({ layout, pages }) =>
-              layout === "dashboard" &&
-              pages.map(({ path, element }) => (
-                <Route exact path={path} element={element} />
-              ))
+          {routes.map(({ layout, pages }) =>
+            layout === "dashboard" &&
+            pages.map(({ path, element }) => (
+              <Route key={path} path={path} element={element} />
+            ))
           )}
-
-           <Route path="/addwatches" element={<AddWatch/>} />
-           <Route path="/addfragrance" element={<AddFragrance/>} />
-           <Route path="/addbags" element={<AddBags/>} />
-
-            <Route path="adduser" element={<AddUser />} />
-            <Route path="updateuser/:id" element={<UpdateUser />} />
-            <Route path="addbrand" element={<AddBrand />} />
-            <Route path="updatebrand/:id" element={<UpdateBrand />} />
-            <Route path="addcode" element={<AddCode />} />
-            <Route path="updatecode/:id" element={<UpdateCode />} />
-            <Route path="addslide" element={<AddSlide />} />
-            <Route path="updateslide/:id" element={<UpdateSlide />} />
-            <Route path="addwrapgift" element={<AddWrapGift />} />
-            <Route path="updatewrapgift/:id" element={<UpdateWrapGift />} />
-            <Route path="updateproduct/:id" element={<UpdateProducts />} /> 
-
-            
-            {/* <Route path="updatewatches/:id" element={<UpdateWatches />} /> 
-            <Route path="updatefragrances/:id" element={<UpdateFragrances />} /> 
-            <Route path="updatebags/:id" element={<UpdateBags />} />  */}
-
-
-        </Routes>   
+          <Route path="/addwatches" element={<AddWatch />} />
+          <Route path="/addfragrance" element={<AddFragrance />} />
+          <Route path="/addbags" element={<AddBags />} />
+          <Route path="adduser" element={<AddUser />} />
+          <Route path="updateuser/:id" element={<UpdateUser />} />
+          <Route path="addbrand" element={<AddBrand />} />
+          <Route path="updatebrand/:id" element={<UpdateBrand />} />
+          <Route path="addcode" element={<AddCode />} />
+          <Route path="updatecode/:id" element={<UpdateCode />} />
+          <Route path="addslide" element={<AddSlide />} />
+          <Route path="updateslide/:id" element={<UpdateSlide />} />
+          <Route path="addwrapgift" element={<AddWrapGift />} />
+          <Route path="updatewrapgift/:id" element={<UpdateWrapGift />} />
+          <Route path="updateproduct/:id" element={<UpdateProducts />} />
+          <Route path="updatewatches/:id" element={<UpdateWatch />} />
+          <Route path="updatefragrances/:id" element={<UpdateFragrance />} />
+          <Route path="updatebags/:id" element={<UpdateBags />} />
+         
+        </Routes>
         <div className="text-blue-gray-600">
           <Footer />
         </div>
