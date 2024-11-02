@@ -7,7 +7,11 @@ export function AddFragrance() {
     name: '',
     description: '',
     sale: '',
+
     main_product_type: 'Fragrance',
+
+    main_product_type: 'Fragrance', // Set default as Fragrance
+
     product_type: '',
     season: '',
     brandID: '',
@@ -58,9 +62,9 @@ export function AddFragrance() {
 
   const handleVariantChange = (index, e) => {
     const { name, value } = e.target;
-    const updatedVariants = [...productData.FragranceVariants];
+    const updatedVariants = [...productData.fragranceVariants];
     updatedVariants[index] = { ...updatedVariants[index], [name]: value };
-    setProductData(prevData => ({ ...prevData, FragranceVariants: updatedVariants }));
+    setProductData(prevData => ({ ...prevData, fragranceVariants: updatedVariants }));
   };
 
   const addVariant = () => {

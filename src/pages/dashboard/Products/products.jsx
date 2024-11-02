@@ -118,30 +118,6 @@ export function Products() {
     }
   };
 
-  const handleEdit = (product) => {
-    const { main_product_type, id } = product;
-
-    switch (main_product_type) {
-      case "Watch":
-        navigate(`/dashboard/updatewatches/${id}`);
-        break;
-      case "Fragrance":
-        navigate(`/dashboard/updatefragrances/${id}`);
-        break;
-      case "Bag":
-        navigate(`/dashboard/updatebags/${id}`);
-        break;
-      default:
-        Swal.fire({
-          title: 'Error!',
-          text: 'Unknown product type.',
-          icon: 'error',
-          background: '#000',
-          color: '#fff',
-        });
-    }
-  };
-
   const renderedProducts = useMemo(() => {
     return products.map((product, key) => {
       const { id, name, description, sale, main_product_type, product_type, season, instock, updated_at, after_price, before_price } = product;

@@ -100,6 +100,7 @@ export function AddWatch() {
     }
 
     try {
+      console.log(productData)
       const response = await fetch('http://localhost:1010/product/add', {
         method: 'POST',
         body: formDataToSend,
