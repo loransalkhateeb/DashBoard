@@ -9,7 +9,6 @@ import {
 } from "@/widgets/layout";
 import routes from "@/routes";
 
-
 import { useMaterialTailwindController, setOpenConfigurator } from "@/context";
 import AddUser from "@/pages/dashboard/Users/AddUser";
 import UpdateUser from "@/pages/dashboard/Users/UpdateUser";
@@ -21,8 +20,6 @@ import AddSlide from "@/pages/dashboard/Slider/AddSlide";
 import UpdateSlide from "@/pages/dashboard/Slider/UpdateSlide";
 import AddWrapGift from "@/pages/dashboard/WrapGift/AddWrapGift";
 import UpdateWrapGift from "@/pages/dashboard/WrapGift/UpdateWrapGift";
-
-
 
 import { AddWatch } from "@/pages/dashboard/Products/AddProducts/AddWatches";
 import AddFragrance from "@/pages/dashboard/Products/AddProducts/AddFragrance";
@@ -59,12 +56,11 @@ export function Dashboard() {
           <Cog6ToothIcon className="h-5 w-5" />
         </IconButton>
         <Routes>
-          {routes.map(
-            ({ layout, pages }) =>
-              layout === "dashboard" &&
-              pages.map(({ path, element }) => (
-                <Route exact path={path} element={element} />
-              ))
+          {routes.map(({ layout, pages }) =>
+            layout === "dashboard" &&
+            pages.map(({ path, element }) => (
+              <Route key={path} path={path} element={element} />
+            ))
           )}
 
            <Route path="/addwatches" element={<AddWatch/>} />
@@ -81,7 +77,7 @@ export function Dashboard() {
             <Route path="updateslide/:id" element={<UpdateSlide />} />
             <Route path="addwrapgift" element={<AddWrapGift />} />
             <Route path="updatewrapgift/:id" element={<UpdateWrapGift />} />
-            {/* <Route path="updateproduct/:id" element={<UpdateProducts />} />  */}
+            <Route path="updateproduct/:id" element={<UpdateProducts />} /> 
 
             
             <Route path="updatewatches/:id" element={<UpdateWatches />} />

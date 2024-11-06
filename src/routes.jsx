@@ -16,10 +16,9 @@ import { BiSolidCoupon } from "react-icons/bi";
 import {Products, Notifications } from "@/pages/dashboard";
 
 
+import { Home } from "@/pages/dashboard";
 
-import { Home, Profile, } from "@/pages/dashboard";
-
-// import { Profile} from "@/pages/dashboard";
+import { Profile} from "@/pages/dashboard";
 
 
 

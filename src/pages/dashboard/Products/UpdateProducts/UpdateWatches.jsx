@@ -191,6 +191,10 @@ export function UpdateWatch() {
     return <Typography>Loading...</Typography>;
   }
 
+  if (loading) {
+    return <Typography>Loading...</Typography>;
+  }
+
   return (
     <section className="m-8 flex justify-center">
       <div className="w-full lg:w-3/5 mt-16">

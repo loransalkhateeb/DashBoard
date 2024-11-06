@@ -272,7 +272,7 @@ export function Products() {
   
     if (result.isConfirmed) {
       try {
-        await fetch(`http://localhost:1010/product/deletebagvariant/${variant.VariantID}`, {
+        await fetch(`${API_URL}/product/deletebagvariant/${variant.VariantID}`, {
           method: 'DELETE'
         });
   

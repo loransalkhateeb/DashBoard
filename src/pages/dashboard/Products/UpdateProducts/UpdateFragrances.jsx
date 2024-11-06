@@ -198,7 +198,6 @@ export function UpdateFragrances() {
     <option key={brand.id} value={brand.id}>{brand.brand_name}</option>
   )), [brands]);
 
-
   const fragranceTypeOptions = useMemo(() => fragranceTypes.map(type => (
     <option key={type.FragranceTypeID} value={type.FragranceTypeID}>{type.TypeName}</option>
   )), [fragranceTypes]);
