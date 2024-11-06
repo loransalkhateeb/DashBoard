@@ -1,24 +1,21 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Input, Button, Typography } from "@material-tailwind/react";
 import Swal from 'sweetalert2';
+import { API_URL } from '@/App';
 
 export function AddFragrance() {
   const [productData, setProductData] = useState({
     name: '',
     description: '',
-    sale: '',
-
+    sale: '', 
     main_product_type: 'Fragrance',
-
-    main_product_type: 'Fragrance', // Set default as Fragrance
-
     product_type: '',
-    season: '',
+    season: '', 
     brandID: '',
     FragranceTypeID: '',
-    Fragrancevariants: [{ size: '', available: '', before_price: '', after_price: '' }],
-    instock: '',
-    img: null,
+    FragranceVariants: [{ size: '', available: '', before_price: '', after_price: '' }],
+    instock: '', 
+    img: [],
   });
 
   const [brands, setBrands] = useState([]);
@@ -26,7 +23,7 @@ export function AddFragrance() {
 
   const fetchBrands = useCallback(async () => {
     try {
-      const response = await fetch('http://localhost:1010/product/get/brands');
+      const response = await fetch(`${API_URL}/product/get/brands`);
       if (!response.ok) throw new Error('Failed to fetch brands');
       const data = await response.json();
       setBrands(data);
@@ -37,7 +34,7 @@ export function AddFragrance() {
 
   const fetchFragranceTypes = useCallback(async () => {
     try {
-      const response = await fetch('http://localhost:1010/fragrancetypeid/getfragrancetypeid');
+      const response = await fetch(`${API_URL}/fragrancetypeid/getfragrancetypeid`);
       if (!response.ok) throw new Error('Failed to fetch fragrance types');
       const data = await response.json();
       setFragranceTypes(data);
@@ -57,26 +54,38 @@ export function AddFragrance() {
   };
 
   const handleFileChange = (e) => {
-    setProductData(prevData => ({ ...prevData, img: e.target.files[0] }));
+    const files = e.target.files;
+    const MAX_IMG = 5
+    if(files.length + productData.img.length > MAX_IMG){
+      Swal.fire({
+        title: 'Error!',
+        text: `You can only upload a maximum of ${MAX_IMG} images.`,
+        icon: 'error',
+        confirmButtonText: 'Ok',
+      });
+      e.target.value = null
+      return;
+    }
+    setProductData(prevData => ({ ...prevData, img: [...prevData.img, ...files] }));
   };
 
   const handleVariantChange = (index, e) => {
     const { name, value } = e.target;
-    const updatedFragrancevariants = [...productData.Fragrancevariants];
-    updatedFragrancevariants[index] = { ...updatedFragrancevariants[index], [name]: value };
-    setProductData(prevData => ({ ...prevData, Fragrancevariants: updatedFragrancevariants }));
+    const updatedVariants = [...productData.FragranceVariants];
+    updatedVariants[index] = { ...updatedVariants[index], [name]: value };
+    setProductData(prevData => ({ ...prevData, FragranceVariants: updatedVariants }));
   };
 
   const addVariant = () => {
     setProductData(prevData => ({
       ...prevData,
-      Fragrancevariants: [...prevData.Fragrancevariants, { size: '', available: '', before_price: '', after_price: '' }],
+      FragranceVariants: [...prevData.FragranceVariants, { size: '', available: '', before_price: '', after_price: '' }],
     }));
   };
 
   const validateData = () => {
     for (const key in productData) {
-      if (key !== 'Fragrancevariants' && key !== 'img' && !productData[key]) {
+      if (key !== 'FragranceVariants' && key !== 'img' && !productData[key]) {
         Swal.fire({
           title: 'Error!',
           text: `${key.replace(/_/g, ' ')} is required.`,
@@ -86,7 +95,6 @@ export function AddFragrance() {
         return false;
       }
     }
-
     return true;
   };
 
@@ -96,27 +104,30 @@ export function AddFragrance() {
 
     const formDataToSend = new FormData();
 
-
     Object.entries(productData).forEach(([key, value]) => {
-      if (key !== 'Fragrancevariants') {
-        formDataToSend.append(key, value);
+      if (key !== 'FragranceVariants') {
+        if (Array.isArray(value)) {
+          value.forEach(item => formDataToSend.append(key, item));
+        } else {
+          formDataToSend.append(key, value);
+        }
       }
     });
 
-    productData.Fragrancevariants.forEach((variant, index) => {
-      formDataToSend.append(`Fragrancevariants[${index}][size]`, variant.size);
-      formDataToSend.append(`Fragrancevariants[${index}][available]`, variant.available);
-      formDataToSend.append(`Fragrancevariants[${index}][before_price]`, variant.before_price);
-      formDataToSend.append(`Fragrancevariants[${index}][after_price]`, variant.after_price);
+    productData.FragranceVariants.forEach((variant, index) => {
+      formDataToSend.append(`FragranceVariants[${index}][size]`, variant.size);
+      formDataToSend.append(`FragranceVariants[${index}][available]`, variant.available);
+      formDataToSend.append(`FragranceVariants[${index}][before_price]`, variant.before_price);
+      formDataToSend.append(`FragranceVariants[${index}][after_price]`, variant.after_price);
     });
 
     try {
-      const response = await fetch('http://localhost:1010/product/add', {
+      const response = await fetch(`${API_URL}/product/add`, {
         method: 'POST',
         body: formDataToSend,
       });
 
-      if (!response.ok) throw new Error(`Network response was not ok: ${await response.text()}`);
+     
 
       Swal.fire({
         title: 'Successfully Added!',
@@ -125,19 +136,18 @@ export function AddFragrance() {
         confirmButtonText: 'Ok',
       });
 
-
       setProductData({
         name: '',
         description: '',
-        sale: '',
+        sale: '', 
         main_product_type: 'Fragrance',
         product_type: '',
-        season: '',
+        season: '', 
         brandID: '',
         FragranceTypeID: '',
-        Fragrancevariants: [{ size: '', available: '', before_price: '', after_price: '' }],
-        instock: '',
-        img: null,
+        FragranceVariants: [{ size: '', available: '', before_price: '', after_price: '' }],
+        instock: '', 
+        img: [],
       });
     } catch (error) {
       console.error('Error:', error);
@@ -161,17 +171,35 @@ export function AddFragrance() {
   return (
     <section className="m-8 flex justify-center">
       <div className="w-full lg:w-3/5 mt-16">
-        <div className="text-center">
+        <div className="text-center mb-6">
           <Typography variant="h2" className="font-bold mb-4">Add Fragrance</Typography>
           <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Fill in the details below to add a new product.</Typography>
         </div>
         <form onSubmit={handleSubmit} className="mt-8 mb-2 mx-auto w-full max-w-screen-lg">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             {Object.entries(productData).map(([key, value]) => (
-              key === 'brandID' ? (
+              key === 'sale' ? (
+                <div key={key}>
+                  <Typography variant="small" className="block mb-1">Sale</Typography>
+                  <select 
+                    name={key} 
+                    value={value} 
+                    onChange={handleChange} 
+                    className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="No">No</option>
+                    <option value="Yes">Yes</option>
+                  </select>
+                </div>
+              ) : key === 'brandID' ? (
                 <div key={key}>
                   <Typography variant="small" className="block mb-1">Brand</Typography>
-                  <select name={key} value={value} onChange={handleChange} className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <select 
+                    name={key} 
+                    value={value} 
+                    onChange={handleChange} 
+                    className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
                     <option value="">Select a brand</option>
                     {brandOptions}
                   </select>
@@ -179,38 +207,60 @@ export function AddFragrance() {
               ) : key === 'FragranceTypeID' ? (
                 <div key={key}>
                   <Typography variant="small" className="block mb-1">Fragrance Type</Typography>
-                  <select name={key} value={value} onChange={handleChange} className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <select 
+                    name={key} 
+                    value={value} 
+                    onChange={handleChange} 
+                    className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
                     <option value="">Select a fragrance type</option>
                     {fragranceTypeOptions}
+                  </select>
+                </div>
+              ) : key === 'season' ? (
+                <div key={key}>
+                  <Typography variant="small" className="block mb-1">Season</Typography>
+                  <select 
+                    name={key} 
+                    value={value} 
+                    onChange={handleChange} 
+                    className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="FALL/WINTER">FALL / WINTER</option>
+                    <option value="SPRING/SUMMER">SPRING / SUMMER</option>
                   </select>
                 </div>
               ) : key === 'instock' ? (
                 <div key={key}>
                   <Typography variant="small" className="block mb-1">Choose Status</Typography>
-                  <select name={key} value={value} onChange={handleChange} className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">Choose Status</option>
+                  <select 
+                    name={key} 
+                    value={value} 
+                    onChange={handleChange} 
+                    className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
                     <option value="yes">In Stock</option>
                     <option value="no">Out of Stock</option>
                   </select>
                 </div>
-              ) : key === 'Fragrancevariants' ? (
+              ) : key === 'FragranceVariants' ? (
                 <div key={key} className="md:col-span-2">
                   <Typography variant="small" className="block mb-1">Sizes</Typography>
-                  {productData.Fragrancevariants.map((variant, index) => (
+                  {productData.FragranceVariants.map((variant, index) => (
                     <div key={index} className="flex flex-col mb-4 border p-4 rounded-lg">
                       <Input 
                         name="size" 
                         value={variant.size} 
                         placeholder="Size" 
                         onChange={(e) => handleVariantChange(index, e)} 
-                        required
+                        
                       />
                       <Input 
                         name="available" 
                         value={variant.available} 
                         placeholder="Available (Yes/No)" 
                         onChange={(e) => handleVariantChange(index, e)} 
-                        required
+                        
                       />
                       <Input 
                         name="before_price" 
@@ -218,7 +268,7 @@ export function AddFragrance() {
                         placeholder="Before Price" 
                         type="number" 
                         onChange={(e) => handleVariantChange(index, e)} 
-                        required
+                        
                       />
                       <Input 
                         name="after_price" 
@@ -226,7 +276,7 @@ export function AddFragrance() {
                         placeholder="After Price" 
                         type="number" 
                         onChange={(e) => handleVariantChange(index, e)} 
-                        required
+                        
                       />
                     </div>
                   ))}
@@ -243,8 +293,21 @@ export function AddFragrance() {
                 </div>
               ) : (
                 <div key={key} className="md:col-span-2">
-                  <Typography variant="small" className="block mb-1">Image</Typography>
-                  <Input type="file" name={key} onChange={handleFileChange} accept="image/*" required />
+                  <Typography variant="small" className="block mb-1">Images</Typography>
+                  <Input type="file" name={key} onChange={handleFileChange} accept="image/*" required multiple/>
+                  <div className="mt-4">
+                    <Typography variant="small" className="mb-2">Image Previews</Typography>
+                    <div className="flex flex-wrap gap-4">
+                      {productData.img.length > 0 && Array.from(productData.img).map((file, idx) => (
+                        <img 
+                          key={idx}
+                          src={URL.createObjectURL(file)} 
+                          alt={`preview-${idx}`} 
+                          className="w-24 h-24 object-cover rounded-md"
+                        />
+                      ))}
+                    </div>
+                  </div>
                 </div>
               )
             ))}

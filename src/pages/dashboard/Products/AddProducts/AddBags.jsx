@@ -1,54 +1,47 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Input, Button, Typography } from "@material-tailwind/react";
 import Swal from 'sweetalert2';
-
+import { useNavigate } from 'react-router-dom';  
+import { API_URL } from '@/App';
 export function AddBags() {
+  const navigate = useNavigate(); 
+
   const [productData, setProductData] = useState({
     name: '',
     description: '',
-    sale: '',
+    sale: '', 
     main_product_type: 'Bag',
     product_type: '',
-    season: '',
+    season: '', 
     brandID: '',
     BagTypeID: '',
-    img: null,
-    BagVariants: [{ size: '', available: '', before_price: '', after_price: '' ,color:''}],
+    BagVariants: [{ size: '', available: '', before_price: '', after_price: '', color: '' }],
     instock: '',
+    img: [], 
   });
 
   const [brands, setBrands] = useState([]);
   const [bagTypes, setBagTypes] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [imagePreview, setImagePreview] = useState(null);
 
   const fetchBrands = useCallback(async () => {
-    setLoading(true);
     try {
-      const response = await fetch('http://localhost:1010/product/get/brands');
+      const response = await fetch(`${API_URL}/product/get/brands`);
       if (!response.ok) throw new Error('Failed to fetch brands');
       const data = await response.json();
       setBrands(data);
     } catch (error) {
       console.error('Error fetching brands:', error);
-      Swal.fire('Error!', 'Failed to fetch brands. Please try again.', 'error');
-    } finally {
-      setLoading(false);
     }
   }, []);
 
   const fetchBagTypes = useCallback(async () => {
-    setLoading(true);
     try {
-      const response = await fetch('http://localhost:1010/bagtypeid/getbagtypeid');
+      const response = await fetch(`${API_URL}/bagtypeid/getbagtypeid`);
       if (!response.ok) throw new Error('Failed to fetch bag types');
       const data = await response.json();
       setBagTypes(data);
     } catch (error) {
       console.error('Error fetching bag types:', error);
-      Swal.fire('Error!', 'Failed to fetch bag types. Please try again.', 'error');
-    } finally {
-      setLoading(false);
     }
   }, []);
 
@@ -63,33 +56,57 @@ export function AddBags() {
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setProductData(prevData => ({ ...prevData, img: file }));
+    const files = e.target.files;
+    const MAX_IMG = 5;
+    if (files.length + productData.img.length > MAX_IMG) {
+     Swal.fire({
+       title: 'Error!',
+       text: `You can only upload a maximum of ${MAX_IMG} images.`,
+       icon: 'error',
+       confirmButtonText: 'Ok',
+     });
+     e.target.value = null
+     return; // Prevent adding more files
+   } 
+    const newFiles = Array.from(files);
 
-    if (file) {
-      const previewUrl = URL.createObjectURL(file);
-      setImagePreview(previewUrl);
-    }
+    setProductData(prevData => {
+      const uniqueFiles = [
+        ...prevData.img,
+        ...newFiles.filter(file => 
+          !prevData.img.some(existingFile => 
+            existingFile.name === file.name && existingFile.size === file.size
+          )
+        )
+      ];
+
+      return { ...prevData, img: uniqueFiles };
+    });
   };
 
   const handleVariantChange = (index, e) => {
     const { name, value } = e.target;
-    const updatedBagVariants = [...productData.BagVariants];
-    updatedBagVariants[index] = { ...updatedBagVariants[index], [name]: value };
-    setProductData(prevData => ({ ...prevData, BagVariants: updatedBagVariants }));
+    const updatedVariants = [...productData.BagVariants];
+    updatedVariants[index] = { ...updatedVariants[index], [name]: value };
+    setProductData(prevData => ({ ...prevData, BagVariants: updatedVariants }));
   };
 
   const addVariant = () => {
     setProductData(prevData => ({
       ...prevData,
-      BagVariants: [...prevData.BagVariants, { size: '', available: '', before_price: '', after_price: '',color:'' }],
+      BagVariants: [...prevData.BagVariants, { size: '', available: '', before_price: '', after_price: '', color: '' }],
     }));
   };
 
   const validateData = () => {
     for (const key in productData) {
       if (key !== 'BagVariants' && key !== 'img' && !productData[key]) {
-        Swal.fire('Error!', `${key.replace(/_/g, ' ')} is required.`, 'error');
+        Swal.fire({
+          title: 'Error!',
+          text: `${key.replace(/_/g, ' ')} is required.`,
+          icon: 'error',
+          confirmButtonText: 'Ok',
+        });
         return false;
       }
     }
@@ -101,66 +118,75 @@ export function AddBags() {
     if (!validateData()) return;
 
     const formDataToSend = new FormData();
-    for (const key in productData) {
+
+    Object.entries(productData).forEach(([key, value]) => {
       if (key !== 'BagVariants') {
-        formDataToSend.append(key, productData[key]);
+        if (Array.isArray(value)) {
+          value.forEach(item => formDataToSend.append(key, item));
+        } else {
+          formDataToSend.append(key, value);
+        }
       }
-    }
+    });
 
     productData.BagVariants.forEach((variant, index) => {
       formDataToSend.append(`BagVariants[${index}][size]`, variant.size);
       formDataToSend.append(`BagVariants[${index}][available]`, variant.available);
       formDataToSend.append(`BagVariants[${index}][before_price]`, variant.before_price);
       formDataToSend.append(`BagVariants[${index}][after_price]`, variant.after_price);
-      formDataToSend.append(`BagVariants[${index}][color]`, variant.color);
+      formDataToSend.append(`BagVariants[${index}][color]`, variant.color); 
     });
 
-    setLoading(true);
+    productData.img.forEach((file) => {
+      formDataToSend.append('img', file);
+    });
+
     try {
-      const response = await fetch('http://localhost:1010/product/add', {
+      const response = await fetch(`${API_URL}/product/add`, {
         method: 'POST',
         body: formDataToSend,
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Network response was not ok: ${errorText}`);
-      }
+      Swal.fire({
+        title: 'Successfully Added!',
+        text: 'The product has been added successfully',
+        icon: 'success',
+        confirmButtonText: 'Ok',
+      }).then(() => {
+        navigate('/products');  
+      });
 
-      Swal.fire('Success!', 'The product has been added successfully.', 'success');
       setProductData({
         name: '',
         description: '',
-        sale: '',
+        sale: '', 
         main_product_type: 'Bag',
         product_type: '',
-        season: '',
+        season: '', 
         brandID: '',
         BagTypeID: '',
-        img: null,
-        BagVariants: [{ size: '', available: '', before_price: '', after_price: '',color:'' }],
+        BagVariants: [{ size: '', available: '', before_price: '', after_price: '', color: '' }],
         instock: '',
+        img: [],
       });
-      setImagePreview(null);
     } catch (error) {
       console.error('Error:', error);
-      Swal.fire('Error!', 'There was a problem adding the product. Please try again.', 'error');
-    } finally {
-      setLoading(false);
+      Swal.fire({
+        title: 'Error!',
+        text: 'There was a problem adding the product. Please try again.',
+        icon: 'error',
+        confirmButtonText: 'Ok',
+      });
     }
   };
 
-  const brandOptions = useMemo(() =>
-    brands.map(brand => (
-      <option key={brand.id} value={brand.id}>{brand.brand_name}</option>
-    )), [brands]
-  );
+  const brandOptions = useMemo(() => brands.map(brand => (
+    <option key={brand.id} value={brand.id}>{brand.brand_name}</option>
+  )), [brands]);
 
-  const bagTypeOptions = useMemo(() =>
-    bagTypes.map(type => (
-      <option key={type.BagTypeID} value={type.BagTypeID}>{type.TypeName}</option>
-    )), [bagTypes]
-  );
+  const bagTypeOptions = useMemo(() => bagTypes.map(type => (
+    <option key={type.BagTypeID} value={type.BagTypeID}>{type.TypeName}</option>
+  )), [bagTypes]);
 
   return (
     <section className="m-8 flex justify-center">
@@ -174,10 +200,28 @@ export function AddBags() {
         <form onSubmit={handleSubmit} className="mt-8 mb-2 mx-auto w-full max-w-screen-lg">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             {Object.entries(productData).map(([key, value]) => (
-              key === 'brandID' ? (
+              key === 'sale' ? (
+                <div key={key}>
+                  <Typography variant="small" className="block mb-1">Sale</Typography>
+                  <select 
+                    name={key} 
+                    value={value} 
+                    onChange={handleChange} 
+                    className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="No">No</option>
+                    <option value="Yes">Yes</option>
+                  </select>
+                </div>
+              ) : key === 'brandID' ? (
                 <div key={key}>
                   <Typography variant="small" className="block mb-1">Brand</Typography>
-                  <select name={key} value={value} onChange={handleChange} className="block w-full border p-2 rounded-lg">
+                  <select 
+                    name={key} 
+                    value={value} 
+                    onChange={handleChange} 
+                    className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
                     <option value="">Select a brand</option>
                     {brandOptions}
                   </select>
@@ -185,16 +229,38 @@ export function AddBags() {
               ) : key === 'BagTypeID' ? (
                 <div key={key}>
                   <Typography variant="small" className="block mb-1">Bag Type</Typography>
-                  <select name={key} value={value} onChange={handleChange} className="block w-full border p-2 rounded-lg">
+                  <select 
+                    name={key} 
+                    value={value} 
+                    onChange={handleChange} 
+                    className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
                     <option value="">Select a bag type</option>
                     {bagTypeOptions}
                   </select>
                 </div>
+              ) : key === 'season' ? (
+                <div key={key}>
+                  <Typography variant="small" className="block mb-1">Season</Typography>
+                  <select 
+                    name={key} 
+                    value={value} 
+                    onChange={handleChange} 
+                    className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="FALL/WINTER">FALL / WINTER</option>
+                    <option value="SPRING/SUMMER">SPRING / SUMMER</option>
+                  </select>
+                </div>
               ) : key === 'instock' ? (
                 <div key={key}>
-                  <Typography variant="small" className="block mb-1">In Stock</Typography>
-                  <select name={key} value={value} onChange={handleChange} className="block w-full border p-2 rounded-lg">
-                    <option value="">Choose Status</option>
+                  <Typography variant="small" className="block mb-1">Choose Status</Typography>
+                  <select 
+                    name={key} 
+                    value={value} 
+                    onChange={handleChange} 
+                    className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
                     <option value="yes">In Stock</option>
                     <option value="no">Out of Stock</option>
                   </select>
@@ -209,14 +275,12 @@ export function AddBags() {
                         value={variant.size} 
                         placeholder="Size" 
                         onChange={(e) => handleVariantChange(index, e)} 
-                        required
                       />
                       <Input 
                         name="available" 
                         value={variant.available} 
                         placeholder="Available (Yes/No)" 
                         onChange={(e) => handleVariantChange(index, e)} 
-                        required
                       />
                       <Input 
                         name="before_price" 
@@ -224,7 +288,6 @@ export function AddBags() {
                         placeholder="Before Price" 
                         type="number" 
                         onChange={(e) => handleVariantChange(index, e)} 
-                        required
                       />
                       <Input 
                         name="after_price" 
@@ -232,52 +295,49 @@ export function AddBags() {
                         placeholder="After Price" 
                         type="number" 
                         onChange={(e) => handleVariantChange(index, e)} 
-                        required
+                      />
+                      <Input 
+                        name="color" 
+                        value={variant.color} 
+                        placeholder="Color" 
+                        onChange={(e) => handleVariantChange(index, e)} 
                       />
                     </div>
                   ))}
-
-                  <Button 
-                    type="button" 
-                    onClick={addVariant} 
-                    className="mt-2"
-                  >
-                    Add Variant
+                  <Button type="button" onClick={addVariant} className="mt-2">
+                    Add Size
                   </Button>
                 </div>
-              ) : (
+              ) : key !== 'img' ? (
                 <div key={key}>
-                  <Typography variant="small" className="block mb-1">{key.replace(/_/g, ' ').capitalize()}</Typography>
-                  <Input 
-                    name={key} 
-                    value={value} 
-                    placeholder={key.replace(/_/g, ' ')} 
-                    onChange={handleChange} 
-                    required={key !== 'img'} 
-                  />
+                  <Typography variant="small" className="block mb-1">
+                    {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  </Typography>
+                  <Input name={key} value={value} onChange={handleChange} required />
+                </div>
+              ) : (
+                <div key={key} className="md:col-span-2">
+                  <Typography variant="small" className="block mb-1">Images</Typography>
+                  <Input type="file" name={key} onChange={handleFileChange} accept="image/*" required multiple />
+                  <div className="mt-4">
+                    <Typography variant="small" className="mb-2">Image Previews</Typography>
+                    <div className="flex flex-wrap gap-4">
+                      {productData.img.length > 0 && Array.from(productData.img).map((file, idx) => (
+                        <img 
+                          key={idx}
+                          src={URL.createObjectURL(file)} 
+                          alt={`preview-${idx}`} 
+                          className="w-24 h-24 object-cover rounded-md"
+                        />
+                      ))}
+                    </div>
+                  </div>
                 </div>
               )
             ))}
           </div>
-
-          <div className="mb-4">
-            <Typography variant="small" className="block mb-1">Product Image</Typography>
-            <Input 
-              type="file" 
-              accept="image/*" 
-              onChange={handleFileChange} 
-            />
-            {imagePreview && (
-              <img src={imagePreview} alt="Preview" className="mt-2 w-32 h-32 object-cover" />
-            )}
-          </div>
-
-          <Button 
-            type="submit" 
-            className={`w-full ${loading ? 'opacity-50 cursor-not-allowed' : ''}`} 
-            disabled={loading}
-          >
-            {loading ? 'Adding...' : 'Add Product'}
+          <Button type="submit" className="mt-4" fullWidth>
+            Add Bag
           </Button>
         </form>
       </div>
@@ -285,8 +345,4 @@ export function AddBags() {
   );
 }
 
-// Helper function to capitalize the first letter of a string
-String.prototype.capitalize = function() {
-  return this.charAt(0).toUpperCase() + this.slice(1);
-};
-export default AddBags
+export default AddBags;

@@ -23,7 +23,7 @@ import { SignIn } from "./pages/auth";
 import UpdateWatches from "./pages/dashboard/Products/UpdateProducts/UpdateWatches";
 import UpdateFragrances from "./pages/dashboard/Products/UpdateProducts/UpdateFragrances";
 import UpdateBags from "./pages/dashboard/Products/UpdateProducts/UpdateBags";
-export const API_URL="http://localhost:1010";
+export const API_URL="https://hadiyyehbackend.kassel.icu";
 
 function App() {
   // const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -57,10 +57,10 @@ function App() {
         <Route path="updatewrapgift/:id" element={<UpdateWrapGift />} /> 
         {/* <Route path="updateproduct/:id" element={<UpdateProducts />} />  */}
 
-
+      
         <Route path="updatewatches/:id" element={<UpdateWatches />} /> 
-        <Route path="updatefragrances/:id" element={<UpdateFragrances />} /> 
-        <Route path="updatebags/:id" element={<UpdateBags />} /> 
+        <Route path="updatefragrances/:id/:FragranceID" element={<UpdateFragrances />} /> 
+        <Route path="updatebags/:id/:BagID" element={<UpdateBags />} /> 
 
 
       </Route>

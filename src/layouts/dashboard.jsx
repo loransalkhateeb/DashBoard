@@ -31,6 +31,8 @@ import  AddBags  from "@/pages/dashboard/Products/AddProducts/AddBags";
 import UpdateWatches from "@/pages/dashboard/Products/UpdateProducts/UpdateWatches";
 import UpdateFragrances from "@/pages/dashboard/Products/UpdateProducts/UpdateFragrances";
 import UpdateBags from "@/pages/dashboard/Products/UpdateProducts/UpdateBags";
+import UpdateBagVariant from "@/pages/dashboard/Products/UpdateBagsVariant";
+import UpdateFragranceVariant from "@/pages/dashboard/Products/UpdateFragranceVariant";
 
 export function Dashboard() {
   const [controller, dispatch] = useMaterialTailwindController();
@@ -82,10 +84,11 @@ export function Dashboard() {
             {/* <Route path="updateproduct/:id" element={<UpdateProducts />} />  */}
 
             
-            <Route path="updatewatches/:id" element={<UpdateWatches />} /> 
-            <Route path="updatefragrances/:id" element={<UpdateFragrances />} /> 
-            <Route path="updatebags/:id" element={<UpdateBags />} /> 
-
+            <Route path="updatewatches/:id" element={<UpdateWatches />} />
+            <Route path="updateFragrances/:id/:FragranceID" element={<UpdateFragrances />} />
+<Route path="updateBags/:id/:BagID" element={<UpdateBags />} />
+          <Route path="updatebagvariants/:id" element={<UpdateBagVariant/>} />
+          <Route path="updateFragrancesVariant/:id" element={<UpdateFragranceVariant />} />
 
         </Routes>   
         <div className="text-blue-gray-600">

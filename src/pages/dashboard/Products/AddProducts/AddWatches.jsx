@@ -1,18 +1,19 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Input, Button, Typography } from "@material-tailwind/react";
 import Swal from 'sweetalert2';
+import { API_URL } from '@/App';
 
 export function AddWatch() {
   const [productData, setProductData] = useState({
     name: '',
     description: '',
-    sale: '',
+    sale: '', 
     main_product_type: 'Watch', 
     product_type: '',
-    season: '',
+    season: '', 
     brandID: '',
     WatchTypeID: '',
-    available: '',
+    available: '', 
     before_price: '',
     after_price: '',
     instock: '',
@@ -24,7 +25,7 @@ export function AddWatch() {
 
   const fetchBrands = useCallback(async () => {
     try {
-      const response = await fetch('http://localhost:1010/product/get/brands');
+      const response = await fetch(`${API_URL}/product/get/brands`);
       if (!response.ok) throw new Error('Failed to fetch brands');
       const data = await response.json();
       setBrands(data);
@@ -35,7 +36,7 @@ export function AddWatch() {
 
   const fetchWatchTypes = useCallback(async () => {
     try {
-      const response = await fetch('http://localhost:1010/producttypeid/getwatchtypeid');
+      const response = await fetch(`${API_URL}/producttypeid/getwatchtypeid`);
       if (!response.ok) throw new Error('Failed to fetch watch types');
       const data = await response.json();
       setWatchTypes(data);
@@ -56,7 +57,21 @@ export function AddWatch() {
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    setProductData(prevData => ({ ...prevData, img: files }));
+    const MAX_IMG = 5;
+    if (files.length + productData.img.length > MAX_IMG) {
+      Swal.fire({
+        title: 'Error!',
+        text: `You can only upload a maximum of ${MAX_IMG} images.`,
+        icon: 'error',
+        confirmButtonText: 'Ok',
+      });
+      e.target.value = null
+      return;
+    }
+    setProductData(prevData => ({
+      ...prevData,
+      img: [...prevData.img, ...files], 
+    }));
   };
 
   const validateData = () => {
@@ -93,14 +108,14 @@ export function AddWatch() {
       if (key === 'instock') {
         formDataToSend.append(key, productData[key] === 'Yes' ? 'yes' : 'no');
       } else if (key === 'img') {
-        productData.img.forEach(file => formDataToSend.append('img', file));
+        productData.img.forEach(file => formDataToSend.append('img', file)); 
       } else {
         formDataToSend.append(key, productData[key]);
       }
     }
 
     try {
-      const response = await fetch('http://localhost:1010/product/add', {
+      const response = await fetch(`${API_URL}/product/add`, {
         method: 'POST',
         body: formDataToSend,
       });
@@ -126,14 +141,14 @@ export function AddWatch() {
         sale: '',
         main_product_type: 'Watch', 
         product_type: '',
-        season: '',
+        season: '', 
         brandID: '',
         WatchTypeID: '',
-        available: '',
+        available: '', 
         before_price: '',
         after_price: '',
         instock: '',
-        img: [],
+        img: [], 
       });
     } catch (error) {
       console.error('Error:', error);
@@ -164,7 +179,20 @@ export function AddWatch() {
         <form onSubmit={handleSubmit} className="mt-8 mb-2 mx-auto w-full max-w-screen-lg">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             {Object.entries(productData).map(([key, value]) => (
-              key === 'brandID' ? (
+              key === 'sale' ? (
+                <div key={key}>
+                  <Typography variant="small" className="block mb-1">Sale</Typography>
+                  <select 
+                    name={key} 
+                    value={value} 
+                    onChange={handleChange} 
+                    className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="No">No</option>
+                    <option value="Yes">Yes</option>
+                  </select>
+                </div>
+              ) : key === 'brandID' ? (
                 <div key={key}>
                   <Typography variant="small" className="block mb-1">Brand</Typography>
                   <select name={key} value={value} onChange={handleChange} className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -178,6 +206,32 @@ export function AddWatch() {
                   <select name={key} value={value} onChange={handleChange} className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="">Select a watch type</option>
                     {watchTypeOptions}
+                  </select>
+                </div>
+              ) : key === 'season' ? (
+                <div key={key}>
+                  <Typography variant="small" className="block mb-1">Season</Typography>
+                  <select 
+                    name={key} 
+                    value={value} 
+                    onChange={handleChange} 
+                    className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="FALL/WINTER">FALL / WINTER</option>
+                    <option value="SPRING/SUMMER">SPRING / SUMMER</option>
+                  </select>
+                </div>
+              ) : key === 'available' ? (
+                <div key={key}>
+                  <Typography variant="small" className="block mb-1">Available</Typography>
+                  <select 
+                    name={key} 
+                    value={value} 
+                    onChange={handleChange} 
+                    className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
                   </select>
                 </div>
               ) : key === 'instock' ? (
@@ -198,6 +252,33 @@ export function AddWatch() {
                 <div key={key}>
                   <Typography variant="small" className="block mb-1">Image</Typography>
                   <Input type="file" name={key} onChange={handleFileChange} multiple />
+                  <div className="mt-4">
+                    {productData.img.length > 0 && (
+                      <div className="flex gap-4 overflow-x-auto">
+                        {productData.img.map((file, index) => (
+                          <div key={index} className="relative">
+                            <img 
+                              src={URL.createObjectURL(file)} 
+                              alt={`preview ${index}`} 
+                              className="w-32 h-32 object-cover rounded-lg"
+                            />
+                            <button 
+                              type="button" 
+                              onClick={() => {
+                                setProductData(prevData => ({
+                                  ...prevData,
+                                  img: prevData.img.filter((_, i) => i !== index)
+                                }));
+                              }} 
+                              className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full"
+                            >
+                              X
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
               )
             ))}
