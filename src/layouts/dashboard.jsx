@@ -77,7 +77,7 @@ export function Dashboard() {
             <Route path="updateslide/:id" element={<UpdateSlide />} />
             <Route path="addwrapgift" element={<AddWrapGift />} />
             <Route path="updatewrapgift/:id" element={<UpdateWrapGift />} />
-            <Route path="updateproduct/:id" element={<UpdateProducts />} /> 
+            {/* <Route path="updateproduct/:id" element={<UpdateProducts />} />  */}
 
             
             <Route path="updatewatches/:id" element={<UpdateWatches />} />
