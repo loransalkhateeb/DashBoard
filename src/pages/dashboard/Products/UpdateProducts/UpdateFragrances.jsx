@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Input, Button, Typography } from "@material-tailwind/react";
 import Swal from 'sweetalert2';
-import { useParams } from 'react-router-dom';
+import { useParams,useNavigate } from 'react-router-dom';
 import { API_URL } from '@/App';
 
 export function UpdateFragrances() {
   const { id, FragranceID } = useParams();
+  const navigate = useNavigate();
   console.log(FragranceID);
 
   const [productData, setProductData] = useState({
@@ -63,6 +64,7 @@ export function UpdateFragrances() {
         FragranceVariants: data.FragranceVariants || prevData.FragranceVariants,
         img: data.images || [],
       }));
+      console.log("first product",data.instock)
     } catch (error) {
       console.error('Error fetching product data:', error);
     } finally {
@@ -74,6 +76,7 @@ export function UpdateFragrances() {
     fetchBrands();
     fetchFragranceTypes();
     fetchProductData();
+    console.log("first",productData.instock)
   }, [fetchBrands, fetchFragranceTypes, fetchProductData]);
 
   // Handle changes in input fields
@@ -151,12 +154,15 @@ export function UpdateFragrances() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const filteredVariants = productData.FragranceVariants.filter(variant =>
+      variant.size && variant.available && variant.before_price && variant.after_price
+    );
 
     const formDataToSend = {
       ...productData,
-      sale: productData.sale === 'yes',
-      instock: productData.instock === 'yes' ? "Yes" : "No",
-      variants: productData.FragranceVariants.map(variant => ({
+      sale: productData.sale,
+      instock: productData.instock,
+      variants:filteredVariants.map(variant => ({
         FragranceID: variant.FragranceID,
         size: variant.size,
         available: variant.available,
@@ -182,6 +188,7 @@ export function UpdateFragrances() {
         icon: 'success',
         confirmButtonText: 'Ok',
       });
+      navigate('/dashboard/products')
     } catch (error) {
       console.error('Error:', error);
       Swal.fire({
@@ -279,7 +286,7 @@ export function UpdateFragrances() {
                 className="block w-full border p-2 rounded-lg"
               >
                 <option value="Yes">In Stock</option>
-                <option value="No">Out of Stock</option>
+                <option value="no">Out of Stock</option>
               </select>
             </div>
             <div className="md:col-span-2">

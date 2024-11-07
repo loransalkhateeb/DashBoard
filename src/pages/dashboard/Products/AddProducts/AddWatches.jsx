@@ -2,8 +2,9 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Input, Button, Typography } from "@material-tailwind/react";
 import Swal from 'sweetalert2';
 import { API_URL } from '@/App';
-
+import { useNavigate } from 'react-router-dom';
 export function AddWatch() {
+  const navigate = useNavigate();
   const [productData, setProductData] = useState({
     name: '',
     description: '',
@@ -134,22 +135,22 @@ export function AddWatch() {
         confirmButtonText: 'Ok',
         confirmButtonColor: '#007BFF',
       });
-
-      setProductData({
-        name: '',
-        description: '',
-        sale: '',
-        main_product_type: 'Watch', 
-        product_type: '',
-        season: '', 
-        brandID: '',
-        WatchTypeID: '',
-        available: '', 
-        before_price: '',
-        after_price: '',
-        instock: '',
-        img: [], 
-      });
+navigate('/dashboard/products')
+      // setProductData({
+      //   name: '',
+      //   description: '',
+      //   sale: '',
+      //   main_product_type: 'Watch', 
+      //   product_type: '',
+      //   season: '', 
+      //   brandID: '',
+      //   WatchTypeID: '',
+      //   available: '', 
+      //   before_price: '',
+      //   after_price: '',
+      //   instock: '',
+      //   img: [], 
+      // });
     } catch (error) {
       console.error('Error:', error);
       Swal.fire({
@@ -188,6 +189,7 @@ export function AddWatch() {
                     onChange={handleChange} 
                     className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
+                    <option value="">Choose Sale</option>
                     <option value="No">No</option>
                     <option value="Yes">Yes</option>
                   </select>
@@ -217,6 +219,7 @@ export function AddWatch() {
                     onChange={handleChange} 
                     className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
+                    <option value="">Choose Season</option>
                     <option value="FALL/WINTER">FALL / WINTER</option>
                     <option value="SPRING/SUMMER">SPRING / SUMMER</option>
                   </select>
@@ -230,6 +233,7 @@ export function AddWatch() {
                     onChange={handleChange} 
                     className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
+                    <option value="">Choose Available</option>
                     <option value="Yes">Yes</option>
                     <option value="No">No</option>
                   </select>

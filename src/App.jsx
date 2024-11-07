@@ -23,7 +23,8 @@ import { SignIn } from "./pages/auth";
 import UpdateWatches from "./pages/dashboard/Products/UpdateProducts/UpdateWatches";
 import UpdateFragrances from "./pages/dashboard/Products/UpdateProducts/UpdateFragrances";
 import UpdateBags from "./pages/dashboard/Products/UpdateProducts/UpdateBags";
-export const API_URL="https://hadiyyehbackend.kassel.icu";
+// export const API_URL="https://hadiyyehbackend.kassel.icu";
+export const API_URL="http://localhost:1010";
 
 function App() {
   // const [isAuthenticated, setIsAuthenticated] = useState(false);

@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Input, Button, Typography } from "@material-tailwind/react";
 import Swal from 'sweetalert2';
-import { useParams } from 'react-router-dom';
+import { useParams ,useNavigate} from 'react-router-dom';
 import { API_URL } from '@/App';
 
 export function UpdateBags() {
   const { id, BagID } = useParams();
+  const navigate = useNavigate();
   const [productData, setProductData] = useState({
     name: '',
     description: '',
@@ -191,6 +192,7 @@ export function UpdateBags() {
         icon: 'success',
         confirmButtonText: 'Ok',
       });
+      navigate('/dashboard/products')
     } catch (error) {
       Swal.fire({
         title: 'Error!',
@@ -283,18 +285,18 @@ export function UpdateBags() {
               <Button type="button" onClick={addVariant} className="mt-4">Add Variant</Button>
             </div>
             <div>
-              <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-4">
                 {productData.img.length > 0 && productData.img.map((image, index) => (
-                  <div key={image.id} className="relative">
+                  <div key={index} className="relative">
                     <img
-                      src={`${API_URL}/${image.img}`}
-                      alt={image.name}
+                      src={image instanceof File ? URL.createObjectURL(image) : image.img}
+                      alt={`Uploaded image ${index + 1}`}
                       className="w-32 h-32 object-cover"
                     />
                     <button
                       type="button"
                       className="absolute top-0 right-0 text-red-500"
-                      onClick={() => handleImageDelete(image.id)}
+                      onClick={() => handleImageDelete(image.img || image.name)} 
                     >
                       <i className="fas fa-trash"></i>
                     </button>

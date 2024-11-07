@@ -55,35 +55,50 @@ export function AddBags() {
     setProductData(prevData => ({ ...prevData, [name]: value }));
   };
 
+  // const handleFileChange = (e) => {
+  //   const files = e.target.files;
+  //   const MAX_IMG = 5;
+  //   if (files.length + productData.img.length > MAX_IMG) {
+  //    Swal.fire({
+  //      title: 'Error!',
+  //      text: `You can only upload a maximum of ${MAX_IMG} images.`,
+  //      icon: 'error',
+  //      confirmButtonText: 'Ok',
+  //    });
+  //    e.target.value = null
+  //    return; // Prevent adding more files
+  //  } 
+  //   const newFiles = Array.from(files);
+
+  //   setProductData(prevData => {
+  //     const uniqueFiles = [
+  //       ...prevData.img,
+  //       ...newFiles.filter(file => 
+  //         !prevData.img.some(existingFile => 
+  //           existingFile.name === file.name && existingFile.size === file.size
+  //         )
+  //       )
+  //     ];
+
+  //     return { ...prevData, img: uniqueFiles };
+  //   });
+  // };
   const handleFileChange = (e) => {
     const files = e.target.files;
-    const MAX_IMG = 5;
-    if (files.length + productData.img.length > MAX_IMG) {
-     Swal.fire({
-       title: 'Error!',
-       text: `You can only upload a maximum of ${MAX_IMG} images.`,
-       icon: 'error',
-       confirmButtonText: 'Ok',
-     });
-     e.target.value = null
-     return; // Prevent adding more files
-   } 
-    const newFiles = Array.from(files);
-
-    setProductData(prevData => {
-      const uniqueFiles = [
-        ...prevData.img,
-        ...newFiles.filter(file => 
-          !prevData.img.some(existingFile => 
-            existingFile.name === file.name && existingFile.size === file.size
-          )
-        )
-      ];
-
-      return { ...prevData, img: uniqueFiles };
-    });
+    const MAX_IMG = 5
+    if(files.length + productData.img.length > MAX_IMG){
+      Swal.fire({
+        title: 'Error!',
+        text: `You can only upload a maximum of ${MAX_IMG} images.`,
+        icon: 'error',
+        confirmButtonText: 'Ok',
+      });
+      e.target.value = null
+      return;
+    }
+    setProductData(prevData => ({ ...prevData, img: [...prevData.img, ...files] }));
   };
-
+  
   const handleVariantChange = (index, e) => {
     const { name, value } = e.target;
     const updatedVariants = [...productData.BagVariants];
@@ -137,9 +152,9 @@ export function AddBags() {
       formDataToSend.append(`BagVariants[${index}][color]`, variant.color); 
     });
 
-    productData.img.forEach((file) => {
-      formDataToSend.append('img', file);
-    });
+    // productData.img.forEach((file) => {
+    //   formDataToSend.append('img', file);
+    // });
 
     try {
       const response = await fetch(`${API_URL}/product/add`, {
@@ -153,7 +168,7 @@ export function AddBags() {
         icon: 'success',
         confirmButtonText: 'Ok',
       }).then(() => {
-        navigate('/products');  
+        navigate('/dashboard/products');  
       });
 
       setProductData({
@@ -279,7 +294,7 @@ export function AddBags() {
                       <Input 
                         name="available" 
                         value={variant.available} 
-                        placeholder="Available (Yes/No)" 
+                        placeholder="Available (yes/no)" 
                         onChange={(e) => handleVariantChange(index, e)} 
                       />
                       <Input 

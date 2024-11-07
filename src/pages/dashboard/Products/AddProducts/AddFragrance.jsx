@@ -2,8 +2,9 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Input, Button, Typography } from "@material-tailwind/react";
 import Swal from 'sweetalert2';
 import { API_URL } from '@/App';
-
+import { useNavigate } from 'react-router-dom';
 export function AddFragrance() {
+  const navigate = useNavigate();
   const [productData, setProductData] = useState({
     name: '',
     description: '',
@@ -135,20 +136,20 @@ export function AddFragrance() {
         icon: 'success',
         confirmButtonText: 'Ok',
       });
-
-      setProductData({
-        name: '',
-        description: '',
-        sale: '', 
-        main_product_type: 'Fragrance',
-        product_type: '',
-        season: '', 
-        brandID: '',
-        FragranceTypeID: '',
-        FragranceVariants: [{ size: '', available: '', before_price: '', after_price: '' }],
-        instock: '', 
-        img: [],
-      });
+     navigate("/dashboard/products");
+      // setProductData({
+      //   name: '',
+      //   description: '',
+      //   sale: '', 
+      //   main_product_type: 'Fragrance',
+      //   product_type: '',
+      //   season: '', 
+      //   brandID: '',
+      //   FragranceTypeID: '',
+      //   FragranceVariants: [{ size: '', available: '', before_price: '', after_price: '' }],
+      //   instock: '', 
+      //   img: [],
+      // });
     } catch (error) {
       console.error('Error:', error);
       Swal.fire({
@@ -239,6 +240,7 @@ export function AddFragrance() {
                     onChange={handleChange} 
                     className="block w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
+                     <option value="">Choose Status</option>
                     <option value="yes">In Stock</option>
                     <option value="no">Out of Stock</option>
                   </select>
@@ -258,7 +260,7 @@ export function AddFragrance() {
                       <Input 
                         name="available" 
                         value={variant.available} 
-                        placeholder="Available (Yes/No)" 
+                        placeholder="Available (yes/no)" 
                         onChange={(e) => handleVariantChange(index, e)} 
                         
                       />

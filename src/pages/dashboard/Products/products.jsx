@@ -55,6 +55,8 @@ export function Products() {
             main_product_type: product.main_product_type,
             product_type: product.product_type,
             season: product.season,
+            instock: product.instock,
+            brand: product.brand,
             updated_at: product.updated_at,
             after_price: product.after_price || variantDetails[0]?.after_price || "N/A",
             before_price: product.before_price || variantDetails[0]?.before_price || "N/A",
@@ -332,7 +334,7 @@ export function Products() {
                 {[
                   "ID", "Name", "Description", "Sale",
                   "Before Price", "After Price", "Main Product Type",
-                  "Product Type", "Season", "Updated At", "Variants",
+                  "Product Type", "Season","Instock","Brand", "Updated At", "Variants",
                   "Variants Action", "Actions"
                 ].map((header) => (
                   <th key={header} className="border-b py-3 px-5 text-left">
@@ -358,26 +360,26 @@ export function Products() {
                     <td className="border-b py-3 px-5"><Typography className="text-xs font-semibold text-blue-gray-500 "style={{width:"300px"}}>
                     {product.description}</Typography></td>
                     <td className="border-b py-3 px-5">
-  <Chip
-  variant="gradient"
-  color={product.sale === "yes" ? "green" :"red"}
-  value={
-  product.sale}
-  className="py-0.5 px-5 text-[11px] font-medium text-center"
-/>
-</td>
-
+                     <Chip
+                      variant="gradient"
+                      color={product.sale === "yes" ? "green" :"red"}
+                     value={product.sale}
+                    className="py-0.5 px-5 text-[11px] font-medium text-center"
+                    />
+                   </td>
                     <td className="border-b py-3 px-5 text-right">{product.before_price} JD</td>
                     <td className="border-b py-3 px-5 text-right">{product.after_price} JD</td>
                     <td className="border-b py-3 px-5">{product.main_product_type}</td>
                     <td className="border-b py-3 px-5">{product.product_type}</td>
                     <td className="border-b py-3 px-5">{product.season}</td>
+                    <td className="border-b py-3 px-5">{product.instock}</td>
+                    <td className="border-b py-3 px-5">{product.brand}</td>
                     <td className="border-b py-3 px-5">{product.updated_at}</td>
                     <td className="border-b py-3 px-5">
                       <ul className="list-disc pl-5 space-y-2">
                         {product.variantDetails.map((variant) => (
                           <li key={variant.VariantID} className="text-sm text-gray-700"style={{width:"300px"}}>
-                            Size :  {variant.Size ? variant.Size : "No Size"} ,Color: {variant.Color ? variant.Color : "No Color"}, Before Price: {variant.before_price} JD, After Price: {variant.after_price}JD,Availability:{variant.Available ? "In Stock" : "Out of Stock"}
+                            Size :  {variant.Size ? variant.Size : "No Size"} ,Color: {variant.Color ? variant.Color : "No Color"}, Before Price: {variant.before_price} JD, After Price: {variant.after_price}JD,Available:{variant.Available}
                           </li>
                         ))}
                       </ul>
